@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mermer İletişim — Teknik Servis & Cihaz Satış Sistemi</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- PDF üretimi (WhatsApp ile otomatik PDF göndermek için) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            navy: {
+              850: '#101828',
+              900: '#0B1120',
+              950: '#060913',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root{
+      color-scheme:light;
+      --bg:#F5F6F5; --card:#fff; --soft:#F1F4F2; --ink:#101714; --ink-2:#38443E; --mute:#69756F; --faint:#9AA59F;
+      --line:#E3E8E5; --line-2:#D3DAD6; --em:#0E7C57; --em-d:#0A6446; --em-s:#E5F4EC; --em-l:#BCDFCE;
+      --sans:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg)!important;color:var(--ink)!important;font-family:var(--sans)!important;font-size:14px;
+      -webkit-font-smoothing:antialiased;font-feature-settings:'cv11','ss03','tnum';letter-spacing:-.006em}
+    body::before{display:none!important}
+    .uppercase{text-transform:none!important}
+    .tracking-wider,[class*="tracking-["]{letter-spacing:0!important}
+    .font-mono{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace!important;letter-spacing:0}
+
+    /* header */
+    header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.92)!important;backdrop-filter:saturate(180%) blur(12px)!important;
+      border:0!important;border-bottom:1px solid var(--line)!important;box-shadow:none!important}
+    header>div{max-width:1360px!important;padding-left:28px!important;padding-right:28px!important}
+    header>div>div{min-height:68px;gap:20px!important}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-mark{width:38px;height:38px;border-radius:10px;background:var(--em);color:#fff;display:grid;place-items:center;font-size:16px}
+    .brand-name{font-size:16px;font-weight:650;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+    .brand-sub{font-size:12px;color:var(--mute);margin-top:2px}
+    .brand-ver{font-size:10.5px;font-weight:600;color:var(--em);background:var(--em-s);padding:2px 7px;border-radius:999px;margin-left:8px;vertical-align:1px}
+    nav{display:flex;align-items:center;gap:2px!important;padding:4px!important;background:var(--soft)!important;border:0!important;border-radius:12px!important}
+    .nav-btn{padding:8px 14px!important;border:0!important;border-radius:9px!important;background:transparent!important;color:var(--mute)!important;
+      font-size:13px!important;font-weight:550!important;box-shadow:none!important;transition:color .15s,background .15s}
+    .nav-btn i{font-size:13px}
+    .nav-btn:hover{color:var(--ink)!important}
+    .nav-btn.bg-blue-600{background:#fff!important;color:var(--ink)!important;box-shadow:0 1px 2px rgba(16,23,20,.08),0 0 0 1px var(--line)!important}
+    .nav-btn.bg-blue-600 i{color:var(--em)}
+    header button[class*="from-blue-"]{background:var(--em)!important;color:#fff!important;border:0!important;border-radius:10px!important;
+      box-shadow:none!important;padding:10px 16px!important;font-size:13px!important;font-weight:600!important;transition:background .15s}
+    header button[class*="from-blue-"]:hover{background:var(--em-d)!important}
+
+    /* layout */
+    main{width:100%!important;max-width:1360px!important;padding:32px 28px 64px!important}
+    main .rounded-xl,main .rounded-2xl,main .rounded-3xl{border-radius:14px!important}
+    main .bg-slate-900,[id$="Modal"] .bg-slate-900{background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:0 1px 2px rgba(16,23,20,.04)!important}
+    .bg-slate-950,.bg-slate-950\/70,.bg-slate-950\/60,.bg-slate-950\/50,.bg-slate-950\/80,.bg-slate-950\/85,.bg-slate-900\/60,.bg-slate-900\/80{background:var(--soft)!important}
+    .bg-slate-800,.bg-slate-800\/70,.bg-slate-800\/60,.bg-slate-700,.bg-slate-700\/40{background:#E9EEEB!important}
+    .border-slate-800,.border-slate-700,.border-slate-800\/80,.border-slate-700\/60,.border-slate-600\/50{border-color:var(--line)!important}
+
+    #view-orders>div:first-child p:first-child{font-size:12.5px!important;font-weight:600!important;color:var(--em)!important;letter-spacing:0!important}
+    #view-orders>div:first-child h2{font-size:28px!important;font-weight:650!important;letter-spacing:-.03em!important;margin-top:4px}
+    #view-orders>div:first-child p.text-sm{color:var(--mute)!important}
+    #view-orders>div:first-child>span{font-size:12.5px;color:var(--faint)!important}
+
+    #view-orders>.grid:first-of-type{gap:16px!important}
+    #view-orders>.grid:first-of-type>div{padding:20px!important;border-radius:14px!important;min-height:0}
+    #view-orders>.grid:first-of-type>div p:first-child{font-size:13px!important;font-weight:500!important;color:var(--mute)!important}
+    #view-orders>.grid:first-of-type>div h3{font-size:30px!important;font-weight:650!important;letter-spacing:-.03em!important;line-height:1.15;margin-top:8px!important;color:var(--ink)!important}
+    #view-orders>.grid:first-of-type>div h3#stat-revenue,#view-orders>.grid:first-of-type>div h3#stat-sales-revenue{font-size:24px!important}
+    #view-orders>.grid:first-of-type>div .w-12.h-12{width:40px!important;height:40px!important;border-radius:10px!important;border:0!important;font-size:16px!important}
+    #view-orders>.grid:first-of-type>div:nth-child(1) .w-12.h-12{background:#E3EDF4!important;color:#2F5677!important}
+    #view-orders>.grid:first-of-type>div:nth-child(2) .w-12.h-12{background:#FAF0D8!important;color:#8A5E14!important}
+    #view-orders>.grid:first-of-type>div:nth-child(3) .w-12.h-12,#view-orders>.grid:first-of-type>div:nth-child(4) .w-12.h-12{background:var(--em-s)!important;color:var(--em)!important}
+    #view-orders>.grid:first-of-type>div>div+p{margin-top:16px!important;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px!important;color:var(--mute)!important}
+    #stat-sales-profit{background:var(--em-s)!important;color:var(--em)!important;border-radius:999px!important;font-weight:600!important}
+    #view-orders>.grid:first-of-type>div:hover{border-color:var(--line-2)!important}
+    #view-orders>.flex.flex-col.lg\:flex-row{padding:12px!important}
+
+    /* type + colors */
+    main h2{font-size:20px!important;font-weight:650!important;letter-spacing:-.025em!important;color:var(--ink)!important}
+    main h3,[id$="Modal"] h3{font-weight:620!important;letter-spacing:-.018em!important;color:var(--ink)!important}
+    main h4{color:var(--ink-2)!important;font-weight:600!important;font-size:13px!important}
+    main .text-white,[id$="Modal"] .text-white{color:var(--ink)!important}
+    .text-slate-100,.text-slate-200{color:var(--ink-2)!important}
+    .text-slate-300{color:#4F5C55!important}
+    .text-slate-400{color:var(--mute)!important}
+    .text-slate-500{color:var(--faint)!important}
+    main .text-blue-400,main .text-blue-300,[id$="Modal"] .text-blue-400,[id$="Modal"] .text-blue-300{color:#2F5677!important}
+    .text-sky-300,.text-sky-400{color:#2C6479!important}
+    .text-indigo-400{color:var(--em)!important}
+    .text-emerald-400,.text-emerald-300{color:var(--em)!important}
+    .text-amber-400,.text-amber-300{color:#8A5E14!important}
+    .text-rose-400,.text-rose-300{color:#A23B33!important}
+    .text-purple-300,.text-purple-400{color:#5F4580!important}
+    main h3.text-amber-400,main h3.text-emerald-400{color:var(--ink)!important}
+    #stat-approval{color:#8A5E14!important}
+
+    .bg-blue-500\/10,.bg-blue-500\/15,.bg-blue-500\/20,.bg-blue-600\/20,.bg-blue-600\/30,.bg-blue-500\/25{background:#E5EEF5!important}
+    .bg-sky-500\/15{background:#E3F0F3!important}
+    .bg-emerald-500\/10,.bg-emerald-500\/15,.bg-emerald-500\/25,.bg-emerald-600\/20,.bg-emerald-600\/30,.bg-emerald-950\/60{background:var(--em-s)!important}
+    .bg-amber-500\/10,.bg-amber-500\/15{background:#FAF0D8!important}
+    .bg-purple-500\/15,.bg-purple-600\/20{background:#F0EBF6!important}
+    .bg-rose-500\/10,.bg-rose-500\/15{background:#FBEAE8!important}
+    .bg-teal-500\/15{background:#E2F1EE!important}
+    .bg-indigo-500\/10{background:var(--em-s)!important}
+    .border-blue-500\/20,.border-blue-500\/30{border-color:#C8D8E5!important}
+    .border-emerald-500\/30{border-color:var(--em-l)!important}
+    .border-amber-500\/30{border-color:#EBD6A4!important}
+    .border-purple-500\/30{border-color:#D9CCE6!important}
+    .border-rose-500\/30{border-color:#EBC2BD!important}
+    .border-sky-500\/30{border-color:#C2DCE3!important}
+    #ordersContainer span[class*="rounded-full"]{border-radius:999px!important}
+    #ordersContainer span[class*="rounded-lg"]{border-radius:8px!important}
+    span.font-mono[class*="bg-blue-500"]{background:var(--soft)!important;color:var(--ink)!important;border:1px solid var(--line)!important;font-weight:600!important}
+    .bg-blue-400,.bg-blue-500{background:#3E7AA6!important}
+    .bg-emerald-400,.bg-emerald-500{background:var(--em)!important}
+    .bg-amber-400,.bg-amber-500{background:#D9A532!important}
+    .bg-sky-400{background:#3C93AE!important}.bg-purple-400{background:#8062A8!important}
+    .bg-slate-400,.bg-slate-500{background:#9AA59F!important}
+
+    /* cards */
+    #ordersContainer .grid>div,#sales-subview-soldList .grid>div,#sales-subview-stockList .grid>div{transition:border-color .15s,box-shadow .2s}
+    #ordersContainer .grid>div:hover,#sales-subview-soldList .grid>div:hover,#sales-subview-stockList .grid>div:hover{
+      border-color:var(--line-2)!important;box-shadow:0 4px 16px rgba(16,23,20,.07)!important}
+    #ordersContainer .grid>div h3{font-size:17px!important}
+    #ordersContainer .grid>div .text-lg.font-extrabold{font-size:18px!important;font-weight:650!important;letter-spacing:-.02em}
+    p.bg-slate-950\/70{border:0!important;border-radius:10px!important;font-size:13px!important;color:var(--ink-2)!important}
+    #ordersContainer .min-w-\[290px\]{background:var(--soft)!important}
+    #ordersContainer .min-w-\[290px\]>div:first-child{background:var(--soft)!important}
+
+    /* forms */
+    main input:not([type="checkbox"]):not([type="radio"]),main select,main textarea,
+    [id$="Modal"] input:not([type="checkbox"]):not([type="radio"]),[id$="Modal"] select,[id$="Modal"] textarea{
+      min-height:40px;background:#fff!important;color:var(--ink)!important;border:1px solid var(--line-2)!important;
+      border-radius:10px!important;box-shadow:none!important;font-size:13.5px!important;font-family:var(--sans)!important;transition:border-color .15s,box-shadow .15s}
+    #ordersContainer select{min-height:0;border-radius:8px!important}
+    main input::placeholder,main textarea::placeholder,[id$="Modal"] input::placeholder{color:var(--faint)!important}
+    main input:focus,main select:focus,main textarea:focus,[id$="Modal"] input:focus,[id$="Modal"] select:focus,[id$="Modal"] textarea:focus{
+      outline:none!important;border-color:var(--em)!important;box-shadow:0 0 0 3px rgba(14,124,87,.14)!important}
+    main label,[id$="Modal"] label{color:var(--ink-2)!important;font-size:12.5px!important;font-weight:550!important;letter-spacing:0!important;text-transform:none!important}
+    option{background:#fff;color:var(--ink)}
+    #customerTrackInput{font-family:ui-monospace,Menlo,monospace!important;letter-spacing:.06em!important;font-size:15px!important}
+
+    /* buttons */
+    main button,[id$="Modal"] button{border-radius:10px!important;box-shadow:none!important;font-weight:550;transition:background .15s,border-color .15s,color .15s}
+    main button:active{transform:none!important}
+    main button[class*="from-blue-"],main button[class*="from-indigo-"],main button[class*="from-emerald-"],
+    main button.bg-blue-600,[id$="Modal"] button[type="submit"],[id$="Modal"] button[class*="from-"]{
+      background:var(--em)!important;color:#fff!important;border:1px solid var(--em)!important;font-size:13px!important}
+    main button[class*="from-blue-"]:hover,main button[class*="from-indigo-"]:hover,main button[class*="from-emerald-"]:hover,
+    main button.bg-blue-600:hover,[id$="Modal"] button[type="submit"]:hover,[id$="Modal"] button[class*="from-"]:hover{background:var(--em-d)!important;border-color:var(--em-d)!important}
+    main button.bg-emerald-600,main button.bg-emerald-700,[id$="Modal"] button.bg-emerald-600{background:var(--em)!important;color:#fff!important}
+    main button.bg-slate-800,[id$="Modal"] button.bg-slate-800{background:#fff!important;border:1px solid var(--line-2)!important;color:var(--ink)!important}
+    main button.bg-slate-800:hover{background:var(--soft)!important}
+    button[class*="bg-emerald-600/20"],button[class*="bg-blue-600/20"]{background:#fff!important;border:1px solid var(--line-2)!important}
+    button[class*="bg-emerald-600/20"]:hover{border-color:var(--em)!important;background:var(--em-s)!important}
+    button[class*="bg-blue-600/20"]:hover{border-color:#3E7AA6!important;background:#E5EEF5!important}
+    #viewMode-cards.bg-slate-800{background:#fff!important;box-shadow:0 1px 2px rgba(16,23,20,.08),0 0 0 1px var(--line)!important;border:0!important}
+    [id^="subtab-"].bg-emerald-600{background:#fff!important;color:var(--ink)!important;border:0!important;box-shadow:0 1px 2px rgba(16,23,20,.08),0 0 0 1px var(--line)!important}
+    main .flex.bg-slate-950,main .flex.bg-slate-900.p-1{background:var(--soft)!important;border:0!important;padding:4px!important;border-radius:12px!important}
+    main .flex.bg-slate-950 button,main .flex.bg-slate-900.p-1 button{border:0!important;background:transparent}
+
+    /* tables */
+    main table{border-collapse:collapse!important}
+    main thead th{background:var(--soft)!important;color:var(--mute)!important;border-bottom:1px solid var(--line)!important;font-size:12px!important;font-weight:550!important;padding:12px 16px!important}
+    main tbody tr{background:transparent!important}
+    main tbody tr:hover{background:var(--soft)!important}
+    main tbody td{color:var(--ink-2);border-color:var(--line)!important;padding:14px 16px!important}
+
+    /* modals + toast */
+    [id$="Modal"]{background:rgba(16,23,20,.5)!important;backdrop-filter:blur(4px)!important}
+    [id$="Modal"]>div>div{background:#fff!important;border:1px solid var(--line)!important;border-radius:16px!important;box-shadow:0 24px 64px -12px rgba(16,23,20,.3)!important}
+    [id$="Modal"] .bg-slate-950,[id$="Modal"] .bg-slate-950\/60,[id$="Modal"] .bg-slate-900\/60{background:var(--soft)!important}
+    [id$="Modal"] .border-slate-800,[id$="Modal"] .border-slate-700{border-color:var(--line)!important}
+    #addDeviceStockModal button[type="button"]{background:#fff;color:var(--ink);border:1px solid var(--line-2)}
+    #toastContainer>div{border-radius:12px!important;background:var(--ink)!important;border:0!important;color:#fff!important;box-shadow:0 12px 32px -8px rgba(16,23,20,.4)!important}
+    #toastContainer>div *{color:inherit!important}
+
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:#CBD3CF;border-radius:10px;border:2px solid var(--bg)}
+    ::selection{background:var(--em-l);color:var(--ink)}
+
+    @media (max-width:1023px){
+      header>div{padding-left:16px!important;padding-right:16px!important}
+      header>div>div{min-height:0;flex-wrap:wrap;padding:12px 0!important;gap:12px!important}
+      nav{order:3;width:100%;overflow-x:auto}
+      main{padding:24px 16px 48px!important}
+    }
+    @media (max-width:640px){
+      .brand-sub{display:none}
+      main{padding:18px 12px 40px!important}
+      #view-orders>.grid:first-of-type{gap:10px!important}
+      #view-orders>.grid:first-of-type>div{padding:14px!important}
+      #view-orders>.grid:first-of-type>div h3{font-size:24px!important}
+      .nav-btn{flex:0 0 auto;padding:8px 11px!important}
+    }
+    @media print{
+      body *{visibility:hidden}
+      #printArea,#printArea *{visibility:visible}
+      #printArea{position:fixed;left:0;top:0;width:100%;background:#fff!important;color:#000!important;padding:16px;margin:0;box-shadow:none!important}
+      .no-print{display:none!important}
+    }
+  </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col">
+
+  <!-- Üst Bildirim / Toast Mesaj Alanı -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- ÜST NAVBAR -->
+  <header>
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-wrap items-center justify-between">
+        <div class="brand">
+          <div class="brand-mark"><i class="fa-solid fa-mobile-screen-button"></i></div>
+          <div>
+            <div class="brand-name">Mermer İletişim<span class="brand-ver">v3.0</span></div>
+            <p class="brand-sub hidden sm:block">Teknik Servis &amp; Cihaz Satış</p>
+          </div>
+        </div>
+        <nav class="flex items-center overflow-x-auto max-w-full">
+          <button onclick="switchTab('orders')" id="tab-orders" class="nav-btn flex items-center gap-2 bg-blue-600 text-white whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench"></i><span>İş Emirleri</span></button>
+          <button onclick="switchTab('sales')" id="tab-sales" class="nav-btn flex items-center gap-2 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-mobile-screen"></i><span>Cihaz Satış &amp; Stok</span></button>
+          <button onclick="switchTab('customer')" id="tab-customer" class="nav-btn flex items-center gap-2 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-qrcode"></i><span>Müşteri Sorgu</span></button>
+        </nav>
+        <div class="flex items-center gap-2">
+          <button onclick="openNewOrderModal()" class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600"><i class="fa-solid fa-plus"></i><span>Yeni Cihaz Kabul</span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ANA İÇERİK ALANI -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ========================================== -->
+    <!-- SEKME 1: İŞ EMİRLERİ & DASHBOARD           -->
+    <!-- ========================================== -->
+    <section id="view-orders" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 pb-1">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-[.14em] text-slate-500 mb-1">Operasyon</p>
+          <h2 class="text-2xl font-bold text-white">Servis genel bakış</h2>
+          <p class="text-sm text-slate-400 mt-1">Servis kayıtları, müşteri onayları ve günlük iş akışı.</p>
+        </div>
+        <span class="text-xs text-slate-500">Teknik servis yönetimi</span>
+      </div>
+      <!-- Üst Özet Kartları (Dashboard) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Kart 1: Servisteki Toplam Cihaz -->
+        <div class="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Servisteki Aktif Cihaz</p>
+              <h3 id="stat-active" class="text-3xl font-extrabold text-white mt-1">0</h3>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-xl">
+              <i class="fa-solid fa-mobile-retro"></i>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+            Teslim edilmemiş tüm kayıtlar
+          </p>
+        </div>
+
+        <!-- Kart 2: Müşteri Onayı Bekleyenler -->
+        <div class="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Onay Bekleyenler</p>
+              <h3 id="stat-approval" class="text-3xl font-extrabold text-amber-400 mt-1">0</h3>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+            Fiyat teklifi dönüşü bekleyen
+          </p>
+        </div>
+
+        <!-- Kart 3: Satılık Cihaz Stoğu & Satışlar -->
+        <div class="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all cursor-pointer" onclick="switchTab('sales')">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Cihaz Satış Ciro / Kâr</p>
+              <div class="flex items-baseline gap-2 mt-1">
+                <h3 id="stat-sales-revenue" class="text-2xl font-extrabold text-emerald-400">0 ₺</h3>
+                <span id="stat-sales-profit" class="text-xs font-bold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-lg">+0 ₺</span>
+              </div>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
+              <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+            <span id="stat-stock-count">0 cihaz vitrinde</span> • <span id="stat-sales-count">0 satış</span>
+          </p>
+        </div>
+
+        <!-- Kart 4: Servis Ciro & Net Kâr -->
+        <div class="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Servis Cirosu</p>
+              <div class="flex items-baseline gap-2 mt-1">
+                <h3 id="stat-revenue" class="text-2xl font-extrabold text-white">0 ₺</h3>
+              </div>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl">
+              <i class="fa-solid fa-turkish-lira-sign"></i>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line text-indigo-400"></i>
+            Hazır: <strong id="stat-ready" class="text-emerald-400">0</strong> cihaz teslim bekliyor
+          </p>
+        </div>
+      </div>
+
+      <!-- Arama, Durum Filtresi ve Görünüm Seçici -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
+        <!-- Arama Kutusu -->
+        <div class="relative flex-1">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            oninput="renderOrders()"
+            placeholder="Müşteri adı, telefon, takip no (SRV-...) veya IMEI ile ara..." 
+            class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-all"
+          />
+        </div>
+
+        <!-- Durum Filtresi & Görünüm Modu -->
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="statusFilter" onchange="renderOrders()" class="bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 outline-none cursor-pointer flex-1 sm:flex-none">
+            <option value="ALL">Tüm Durumlar (Aktif + Teslim)</option>
+            <option value="ACTIVE" selected>Sadece Servisteki Aktifler</option>
+            <option value="Kabul Edildi">Kabul Edildi</option>
+            <option value="İnceleniyor">İnceleniyor</option>
+            <option value="Müşteri Onayı Bekliyor">Müşteri Onayı Bekliyor</option>
+            <option value="Parça Bekleniyor">Parça Bekleniyor</option>
+            <option value="Tamirde">Tamirde</option>
+            <option value="Hazır">Hazır</option>
+            <option value="Teslim Edildi">Teslim Edildi</option>
+          </select>
+
+          <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+            <button onclick="setViewMode('cards')" id="viewMode-cards" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white transition-all" title="Kart Görünümü">
+              <i class="fa-solid fa-grip"></i> Kartlar
+            </button>
+            <button onclick="setViewMode('kanban')" id="viewMode-kanban" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all" title="Kanban Panosu">
+              <i class="fa-solid fa-table-columns"></i> Pano
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- İş Emirleri Listesi / Kartlar / Kanban Alanı -->
+      <div id="ordersContainer"></div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SEKME 2: CİHAZ STOK & SATIŞ YÖNETİMİ       -->
+    <!-- ========================================== -->
+    <section id="view-sales" class="hidden space-y-6">
+      <!-- Üst Başlık ve Hızlı Butonlar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-mobile-screen text-emerald-400"></i>
+            Cihaz Stok & Satış Yönetimi
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">Sıfır (0) ve 2. El, Yurt İçi / Yurt Dışı cihaz stoğu ekleyin veya doğrudan müşteri satışı kaydedin.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="openAddDeviceStockModal()" class="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-semibold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 transition-all">
+            <i class="fa-solid fa-box-open text-blue-400"></i>
+            <span>Stoğa Cihaz Ekle</span>
+          </button>
+          <button onclick="openNewSaleModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 transition-all shadow-lg shadow-emerald-600/20">
+            <i class="fa-solid fa-handshake"></i>
+            <span>Cihaz Satışı Kaydet</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Alt Sekmeler: Satılan Cihazlar vs Satılık Vitrin Stoğu -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+          <button onclick="switchSalesSubTab('soldList')" id="subtab-soldList" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition-all flex items-center gap-2">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Satılan Cihazlar (<span id="countSoldBadge">0</span>)</span>
+          </button>
+          <button onclick="switchSalesSubTab('stockList')" id="subtab-stockList" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2">
+            <i class="fa-solid fa-store"></i>
+            <span>Satılık Cihaz Stoğu (<span id="countStockBadge">0</span>)</span>
+          </button>
+        </div>
+
+        <!-- Arama ve Filtre -->
+        <div class="flex flex-wrap items-center gap-2 flex-1 sm:flex-initial justify-end">
+          <div class="relative flex-1 sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="salesSearchInput" oninput="renderSalesModule()" placeholder="İsim, marka/model veya IMEI..." class="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-xl pl-8 pr-3 py-2 text-xs text-white outline-none" />
+          </div>
+          <select id="salesConditionFilter" onchange="renderSalesModule()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none">
+            <option value="ALL">0 & 2. El (Tümü)</option>
+            <option value="Sıfır (0)">Sadece Sıfır (0)</option>
+            <option value="İkinci El (2. El)">Sadece 2. El</option>
+          </select>
+          <select id="salesOriginFilter" onchange="renderSalesModule()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none">
+            <option value="ALL">Yurt İçi & Dışı</option>
+            <option value="Yurt İçi">Yurt İçi</option>
+            <option value="Yurt Dışı">Yurt Dışı</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Alt Görünüm 1: Satılan Cihazlar Listesi -->
+      <div id="sales-subview-soldList" class="space-y-4"></div>
+
+      <!-- Alt Görünüm 2: Satılık Cihaz Stoğu Listesi -->
+      <div id="sales-subview-stockList" class="hidden space-y-4"></div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SEKME 4: MÜŞTERİ DURUM SORGULAMA EKRANI    -->
+    <!-- ========================================== -->
+    <section id="view-customer" class="hidden max-w-2xl mx-auto space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center shadow-xl">
+        <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-3xl mx-auto mb-4">
+          <i class="fa-solid fa-qrcode"></i>
+        </div>
+        <h2 class="text-2xl font-extrabold text-white">Cihaz Durum Sorgulama</h2>
+        <p class="text-sm text-slate-400 mt-1.5">Mermer İletişim servis fişinizde yer alan takip numarasını girerek cihazınızın güncel durumunu öğrenebilirsiniz.</p>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-2.5">
+          <input 
+            type="text" 
+            id="customerTrackInput" 
+            placeholder="Örn: SRV-2026-101" 
+            class="flex-1 bg-slate-950 border border-slate-700 focus:border-blue-500 rounded-xl px-4 py-3 text-center sm:text-left font-mono uppercase text-white tracking-wider outline-none"
+          />
+          <button onclick="trackDeviceCustomer()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg shadow-blue-600/25">
+            Sorgula
+          </button>
+        </div>
+
+        <!-- Hızlı Demo Örnekleri -->
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400">
+          <span>Örnek Kodlar:</span>
+          <button onclick="quickCustomerFill('SRV-2026-101')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-300 font-mono transition-colors">SRV-2026-101</button>
+          <button onclick="quickCustomerFill('SRV-2026-102')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-300 font-mono transition-colors">SRV-2026-102</button>
+          <button onclick="quickCustomerFill('SRV-2026-103')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-300 font-mono transition-colors">SRV-2026-103</button>
+        </div>
+      </div>
+
+      <!-- Sorgu Sonucu Alanı -->
+      <div id="customerResultArea"></div>
+    </section>
+
+  </main>
+
+
+  <!-- STOĞA CİHAZ EKLEME MODALI -->
+  <div id="addDeviceStockModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="w-full max-w-2xl overflow-hidden">
+        <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-[.13em] text-slate-500 mb-1">CİHAZ ENVANTERİ</p>
+            <h3 class="text-lg font-bold text-slate-900">Stoğa cihaz ekle</h3>
+            <p class="text-xs text-slate-500 mt-1">Satışa hazır cihazın bilgilerini kaydedin.</p>
+          </div>
+          <button type="button" onclick="closeAddDeviceStockModal()" class="text-slate-500 hover:text-slate-900 p-2" aria-label="Pencereyi kapat"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form id="addDeviceStockForm" onsubmit="handleAddDeviceStock(event)" class="p-6 space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block mb-1.5">Marka / Model *</label>
+              <input type="text" id="stkModel" required maxlength="100" placeholder="Örn. Apple iPhone 15 Pro 256GB" class="w-full px-3 py-2.5 text-sm" />
+            </div>
+            <div>
+              <label class="block mb-1.5">IMEI / Seri No</label>
+              <input type="text" id="stkImei" maxlength="30" placeholder="IMEI veya seri numarası" class="w-full px-3 py-2.5 text-sm font-mono" />
+            </div>
+            <div>
+              <label class="block mb-1.5">Cihaz Durumu *</label>
+              <select id="stkCondition" required class="w-full px-3 py-2.5 text-sm">
+                <option value="Sıfır (0)">Sıfır (0)</option>
+                <option value="İkinci El (2. El)">İkinci El (2. El)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1.5">Menşei / Kayıt Durumu *</label>
+              <select id="stkOrigin" required class="w-full px-3 py-2.5 text-sm">
+                <option value="Yurt İçi">Yurt İçi</option>
+                <option value="Yurt Dışı">Yurt Dışı</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1.5">Garanti Süresi</label>
+              <select id="stkWarranty" class="w-full px-3 py-2.5 text-sm">
+                <option value="Yok">Yok</option>
+                <option value="3 Ay">3 Ay</option>
+                <option value="6 Ay">6 Ay</option>
+                <option value="12 Ay">12 Ay</option>
+                <option value="24 Ay (Distribütör)">24 Ay (Distribütör)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1.5">Alış Fiyatı (₺) *</label>
+              <input type="number" id="stkBuyPrice" required min="0" step="1" placeholder="0" class="w-full px-3 py-2.5 text-sm" />
+            </div>
+            <div>
+              <label class="block mb-1.5">Satış / Etiket Fiyatı (₺) *</label>
+              <input type="number" id="stkTargetPrice" required min="0" step="1" placeholder="0" class="w-full px-3 py-2.5 text-sm" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block mb-1.5">Notlar / Kozmetik Durum</label>
+              <textarea id="stkNotes" rows="3" maxlength="500" placeholder="Renk, pil sağlığı, kutu içeriği, çizik veya değişen bilgisi..." class="w-full px-3 py-2.5 text-sm"></textarea>
+            </div>
+          </div>
+          <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200">
+            <p class="text-xs text-slate-500">Kaydedilen cihaz, satılık cihaz stoğu listesinde görünür.</p>
+            <div class="flex gap-2">
+              <button type="button" onclick="closeAddDeviceStockModal()" class="px-4 py-2.5 text-sm border border-slate-300 text-slate-600">Vazgeç</button>
+              <button type="submit" class="px-5 py-2.5 text-sm bg-blue-600 text-white"><i class="fa-solid fa-check mr-1.5"></i>Stoğa Kaydet</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- WhatsApp API Ayarları -->
+  <button onclick="openWaSettings()" class="no-print fixed bottom-5 left-5 z-30 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2.5 rounded-full shadow-lg flex items-center gap-2" title="WhatsApp API Ayarları">
+    <i class="fa-brands fa-whatsapp"></i> WhatsApp API
+  </button>
+  <div id="waSettingsModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full shadow-2xl p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-brands fa-whatsapp text-emerald-400"></i> WhatsApp Business API</h3>
+          <button onclick="closeWaSettings()" class="text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p class="text-xs text-slate-400">Mesaj ve PDF'in otomatik gitmesi için kendi sunucunuzun (whatsapp-backend) adresini girin. Meta token'ı tarayıcıda tutulmaz, sadece sunucuda durur.</p>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Sunucu Adresi</label>
+          <input id="waBackendUrl" type="url" placeholder="https://servis.mermeriletisim.com" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Sunucu Erişim Anahtarı (API_KEY)</label>
+          <input id="waBackendKey" type="password" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+        </div>
+        <div class="flex gap-2 justify-end pt-2">
+          <button onclick="testWaBackend()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm">Bağlantıyı Test Et</button>
+          <button onclick="saveWaSettings()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold">Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 1: YENİ CİHAZ KABUL FORMU                          -->
+  <!-- ======================================================== -->
+  <div id="newOrderModal" class="fixed inset-0 z-40 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden animate-fade-in">
+        <!-- Modal Üst -->
+        <div class="px-6 py-4 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center">
+              <i class="fa-solid fa-file-circle-plus"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white">Yeni Cihaz Kabul & İş Emri</h3>
+              <p class="text-xs text-slate-400">Otomatik Takip No: <span id="modalTrackingPreview" class="font-mono text-blue-400 font-bold">SRV-2026-105</span></p>
+            </div>
+          </div>
+          <button onclick="closeNewOrderModal()" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition-colors">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Form -->
+        <form id="newOrderForm" onsubmit="handleCreateOrder(event)" class="p-6 space-y-5 max-h-[82vh] overflow-y-auto">
+          
+          <!-- Aynı IMEI Geçmiş Uyarısı -->
+          <div id="imeiHistoryAlert" class="hidden bg-amber-500/10 border border-amber-500/40 rounded-xl p-4 text-sm text-amber-200">
+            <div class="flex items-start gap-3">
+              <i class="fa-solid fa-clock-rotate-left text-amber-400 text-lg mt-0.5"></i>
+              <div class="flex-1">
+                <p class="font-bold text-amber-300">Dikkat: Bu IMEI / Seri No sistemde kayıtlı!</p>
+                <div id="imeiHistoryDetails" class="mt-1.5 text-xs space-y-1.5 text-amber-100/90"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1. Müşteri Bilgileri -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Müşteri Adı Soyadı *</label>
+              <input type="text" id="custName" required placeholder="Örn: Ahmet Yılmaz" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Telefon Numarası (WhatsApp) *</label>
+              <input type="tel" id="custPhone" required placeholder="Örn: 0532 123 45 67" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+            </div>
+          </div>
+
+          <!-- 2. Cihaz Bilgileri -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Cihaz Marka / Model *</label>
+              <input type="text" id="deviceModel" list="deviceModelOptions" required placeholder="Model yazın veya listeden seçin" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+              <datalist id="deviceModelOptions">
+                <option value="Apple iPhone 17 Pro Max"></option><option value="Apple iPhone 17 Pro"></option><option value="Apple iPhone 17 Air"></option><option value="Apple iPhone 17"></option>
+                <option value="Apple iPhone 16 Pro Max"></option><option value="Apple iPhone 16 Pro"></option><option value="Apple iPhone 16 Plus"></option><option value="Apple iPhone 16"></option>
+                <option value="Apple iPhone 15 Pro Max"></option><option value="Apple iPhone 15 Pro"></option><option value="Apple iPhone 15 Plus"></option><option value="Apple iPhone 15"></option>
+                <option value="Apple iPhone 14 Pro Max"></option><option value="Apple iPhone 14 Pro"></option><option value="Apple iPhone 14 Plus"></option><option value="Apple iPhone 14"></option>
+                <option value="Apple iPhone 13 Pro Max"></option><option value="Apple iPhone 13 Pro"></option><option value="Apple iPhone 13 mini"></option><option value="Apple iPhone 13"></option>
+                <option value="Apple iPhone 12 Pro Max"></option><option value="Apple iPhone 12 Pro"></option><option value="Apple iPhone 12 mini"></option><option value="Apple iPhone 12"></option>
+                <option value="Apple iPhone 11 Pro Max"></option><option value="Apple iPhone 11 Pro"></option><option value="Apple iPhone 11"></option><option value="Apple iPhone SE (2022)"></option>
+                <option value="Samsung Galaxy S25 Ultra"></option><option value="Samsung Galaxy S25+"></option><option value="Samsung Galaxy S25"></option><option value="Samsung Galaxy S24 Ultra"></option><option value="Samsung Galaxy S24+"></option><option value="Samsung Galaxy S24"></option><option value="Samsung Galaxy S23 Ultra"></option><option value="Samsung Galaxy S23+"></option><option value="Samsung Galaxy S23"></option><option value="Samsung Galaxy S22 Ultra"></option><option value="Samsung Galaxy S22+"></option><option value="Samsung Galaxy S22"></option><option value="Samsung Galaxy S21 FE"></option><option value="Samsung Galaxy S21 Ultra"></option><option value="Samsung Galaxy S21"></option>
+                <option value="Samsung Galaxy A56"></option><option value="Samsung Galaxy A55"></option><option value="Samsung Galaxy A54"></option><option value="Samsung Galaxy A53"></option><option value="Samsung Galaxy A36"></option><option value="Samsung Galaxy A35"></option><option value="Samsung Galaxy A34"></option><option value="Samsung Galaxy A25"></option><option value="Samsung Galaxy A24"></option><option value="Samsung Galaxy A15"></option><option value="Samsung Galaxy A14"></option>
+                <option value="Samsung Galaxy Z Fold7"></option><option value="Samsung Galaxy Z Flip7"></option><option value="Samsung Galaxy Z Fold6"></option><option value="Samsung Galaxy Z Flip6"></option><option value="Samsung Galaxy Z Fold5"></option><option value="Samsung Galaxy Z Flip5"></option>
+                <option value="Xiaomi 15 Ultra"></option><option value="Xiaomi 15"></option><option value="Xiaomi 14 Ultra"></option><option value="Xiaomi 14"></option><option value="Xiaomi 14T Pro"></option><option value="Xiaomi 14T"></option><option value="Xiaomi 13T Pro"></option><option value="Xiaomi 13T"></option><option value="Xiaomi 13 Pro"></option><option value="Xiaomi 13"></option><option value="Xiaomi 12T Pro"></option><option value="Xiaomi 12T"></option>
+                <option value="Redmi Note 14 Pro+ 5G"></option><option value="Redmi Note 14 Pro 5G"></option><option value="Redmi Note 14 Pro"></option><option value="Redmi Note 14"></option><option value="Redmi Note 13 Pro+ 5G"></option><option value="Redmi Note 13 Pro 5G"></option><option value="Redmi Note 13 Pro"></option><option value="Redmi Note 13"></option><option value="Redmi Note 12 Pro+ 5G"></option><option value="Redmi Note 12 Pro"></option><option value="Redmi Note 12"></option><option value="Redmi 14C"></option><option value="Redmi 13C"></option><option value="Redmi 13"></option><option value="Redmi 12"></option>
+              </datalist>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">IMEI / Seri No</label>
+              <input type="text" id="deviceImei" oninput="checkImeiHistory(this.value)" placeholder="356789012345678" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm font-mono text-white outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Cihaz Ekran Şifresi / Desen</label>
+              <input type="text" id="devicePasscode" placeholder="Örn: 1453 veya Yok" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+            </div>
+          </div>
+
+          <!-- 3. Kozmetik Durum & Aksesuarlar -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Kabul Anındaki Kozmetik Durum</label>
+              <input type="text" id="cosmeticCondition" placeholder="Örn: Arka cam çatlak, kasa köşeleri çizik" class="w-full bg-slate-900 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2 text-sm text-white outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-2">Yanında Bırakılan Aksesuarlar</label>
+              <div class="flex flex-wrap gap-3 text-xs text-slate-300">
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" name="accessories" value="Kılıf" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0" /> Kılıf
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" name="accessories" value="SIM Kart" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0" /> SIM Kart
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" name="accessories" value="Hafıza Kartı" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0" /> Hafıza Kartı
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input type="checkbox" name="accessories" value="Şarj Kablosu" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0" /> Şarj Kablosu
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Arıza Tanımı & Hızlı Şablonlar -->
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+              <label class="text-xs font-semibold text-slate-300">Arıza Tanımı & Yapılacak İşlem *</label>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="applyPreset('Ekran Değişimi (Orijinal)', null, null)" class="text-[11px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors">+ Ekran Orijinal</button>
+                <button type="button" onclick="applyPreset('Ekran Değişimi (Orta Kalite)', null, null)" class="text-[11px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors">+ Ekran Orta Kalite</button>
+                <button type="button" onclick="applyPreset('Batarya Değişimi (Orijinal)', null, null)" class="text-[11px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors">+ Batarya Orijinal</button>
+                <button type="button" onclick="applyPreset('Batarya Değişimi (Güçlendirilmiş)', null, null)" class="text-[11px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors">+ Batarya Güçlendirilmiş</button>
+                <button type="button" onclick="applyPreset('Şarj Soketi / Bord Onarımı', 250, 650)" class="text-[11px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors">+ Şarj Soketi</button>
+                <button type="button" onclick="applyPreset('Sıvı Teması & Anakart Temizliği', 150, 800)" class="text-[11px] px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors">+ Sıvı Teması</button>
+              </div>
+            </div>
+            <textarea id="issueDesc" rows="2" required placeholder="Müşteri şikayeti ve tespit edilen arıza..." class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"></textarea>
+          </div>
+
+          <!-- 5. Fiyatlandırma & Garanti -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Teslim Alan Yetkili *</label>
+              <select id="receivedBy" required class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+                <option value="" selected disabled>Seçiniz...</option>
+                <option value="Rıdvan Mermer">Rıdvan Mermer</option>
+                <option value="Aykut Kaplan">Aykut Kaplan</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Müşteri Fiyatı (₺) *</label>
+              <input type="number" id="customerPrice" value="0" min="0" required oninput="calculateNetProfitPreview()" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm font-bold text-emerald-400 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Garanti Süresi</label>
+              <select id="warrantyPeriod" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+                <option value="Yok">Garanti Yok</option>
+                <option value="3 Ay" selected>3 Ay Garanti</option>
+                <option value="6 Ay">6 Ay Garanti</option>
+                <option value="1 Yıl">1 Yıl Garanti</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Alt Bilgi & Kaydet -->
+          <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-end gap-3">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button type="button" onclick="closeNewOrderModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium transition-colors">İptal</button>
+              <button type="submit" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 transition-all">
+                <i class="fa-solid fa-check mr-1.5"></i>Kaydı Oluştur
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 2: YAZDIRILABİLİR MÜŞTERİ KABUL FİŞİ               -->
+  <!-- ======================================================== -->
+  <div id="receiptModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
+        <!-- Kontrol Barı (Yazdırmada Gizlenir) -->
+        <div class="no-print px-5 py-3.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+          <span class="text-sm font-semibold text-white flex items-center gap-2">
+            <i class="fa-solid fa-print text-blue-400"></i> Müşteri Kabul Fişi Önizleme
+          </span>
+          <div class="flex items-center gap-2">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-colors">
+              <i class="fa-solid fa-print"></i> Yazdır / PDF
+            </button>
+            <button onclick="closeReceiptModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800">
+              <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- FİŞ KAĞIDI (Yazdırılacak Alan) -->
+        <div id="printArea" class="bg-white text-slate-900 p-6 sm:p-8 text-xs leading-relaxed">
+          <!-- Üst Başlık & QR -->
+          <div class="flex items-start justify-between border-b-2 border-slate-900 pb-4">
+            <div>
+              <h2 class="text-xl font-black tracking-tight uppercase">MERMER İLETİŞİM</h2>
+              <p class="text-[11px] text-slate-600 font-medium">Cep Telefonu Satış & Teknik Servis Merkezi</p>
+              <p class="text-[10px] text-slate-500 mt-1">Tel: 0 (332) 555 01 99 • Kulu / Konya</p>
+              <div class="mt-2 inline-block bg-slate-900 text-white font-mono font-bold px-2.5 py-1 rounded text-sm" id="rcp-trackingNo">
+                SRV-2026-101
+              </div>
+            </div>
+
+            <!-- Görsel QR Kod Simülasyonu -->
+            <div class="text-center">
+              <div class="w-20 h-20 border-2 border-slate-900 p-1 rounded flex items-center justify-center bg-white">
+                <svg viewBox="0 0 100 100" class="w-full h-full fill-slate-900">
+                  <rect x="5" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/>
+                  <rect x="12" y="12" width="11" height="11"/>
+                  <rect x="70" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/>
+                  <rect x="77" y="12" width="11" height="11"/>
+                  <rect x="5" y="70" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/>
+                  <rect x="12" y="77" width="11" height="11"/>
+                  <rect x="40" y="10" width="8" height="8"/><rect x="52" y="18" width="8" height="14"/>
+                  <rect x="10" y="42" width="14" height="8"/><rect x="35" y="38" width="12" height="12"/>
+                  <rect x="55" y="45" width="10" height="10"/><rect x="75" y="40" width="15" height="8"/>
+                  <rect x="42" y="65" width="8" height="15"/><rect x="60" y="70" width="12" height="12"/>
+                  <rect x="78" y="68" width="14" height="22"/><rect x="45" y="85" width="10" height="8"/>
+                </svg>
+              </div>
+              <span class="text-[9px] font-semibold text-slate-600 block mt-1">Durum Sorgu QR</span>
+            </div>
+          </div>
+
+          <!-- Tarih & Müşteri -->
+          <div class="grid grid-cols-2 gap-4 py-3 border-b border-dashed border-slate-400">
+            <div>
+              <span class="text-[10px] uppercase text-slate-500 font-bold block">Müşteri Bilgileri</span>
+              <p class="font-bold text-sm" id="rcp-custName">-</p>
+              <p class="text-slate-700" id="rcp-custPhone">-</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] uppercase text-slate-500 font-bold block">Kabul Tarihi</span>
+              <p class="font-semibold" id="rcp-date">-</p>
+              <p class="text-[11px] font-bold text-slate-800 mt-0.5" id="rcp-status">-</p>
+            </div>
+          </div>
+
+          <!-- Cihaz Detayları -->
+          <div class="py-3 border-b border-dashed border-slate-400 space-y-1.5">
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Cihaz Marka / Model:</span>
+              <span class="font-bold" id="rcp-device">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">IMEI / Seri No:</span>
+              <span class="font-mono" id="rcp-imei">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Kabul Kozmetik Durumu:</span>
+              <span id="rcp-cosmetic">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Bırakılan Aksesuarlar:</span>
+              <span id="rcp-accessories">-</span>
+            </div>
+          </div>
+
+          <!-- Arıza & Ücret -->
+          <div class="py-3 border-b border-slate-900 space-y-2">
+            <div>
+              <span class="text-[10px] uppercase text-slate-500 font-bold block">Arıza Tanımı / Yapılacak İşlem</span>
+              <p class="font-medium text-slate-900 bg-slate-100 p-2 rounded mt-1" id="rcp-issue">-</p>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <div>
+                <span class="text-slate-500 block text-[10px]">Garanti Süresi</span>
+                <strong id="rcp-warranty" class="text-xs">3 Ay</strong>
+              </div>
+              <div class="text-right">
+                <span class="text-slate-500 block text-[10px]">Tahmini / Onaylı Tutar</span>
+                <strong id="rcp-price" class="text-lg font-black">0 ₺</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Yasal Şartlar -->
+          <div class="py-3 text-[9.5px] text-slate-600 space-y-1">
+            <p class="font-bold text-slate-800">SERVİS KABUL ŞARTLARI:</p>
+            <p>1. Cihaz içerisindeki verilerin (rehber, fotoğraf vb.) yedeğini almak müşterinin sorumluluğundadır. Onarım esnasında oluşabilecek veri kayıplarından servisimiz sorumlu değildir.</p>
+            <p>2. Sıvı temaslı veya darbeli cihazlarda müdahale sırasında anakart kaynaklı arızalar derinleşebilir.</p>
+            <p>3. Onarımı tamamlanan ve bilgisi verilen cihazların 30 gün içinde teslim alınmaması halinde sorumluluk kabul edilmez.</p>
+          </div>
+
+          <!-- İmza Alanı -->
+          <div class="flex justify-end pt-4 mt-2 border-t border-slate-300 text-center">
+            <div class="w-1/2">
+              <p class="font-bold text-[10px] uppercase text-slate-700">Teslim Alan Yetkili</p>
+              <p class="font-bold text-xs text-slate-900 mt-1" id="rcp-receiver">-</p>
+              <div class="h-12 border-b border-slate-400 mt-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 5: CİHAZ SATIŞI KAYDETME MODALI                    -->
+  <!-- ======================================================== -->
+  <div id="newSaleModal" class="fixed inset-0 z-40 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden">
+        <div class="px-6 py-4 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+              <i class="fa-solid fa-handshake"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white">Cihaz Satışı Kaydet</h3>
+              <p class="text-xs text-slate-400">Satış Belge No: <span id="saleNoPreview" class="font-mono text-emerald-400 font-bold">SAT-2026-104</span></p>
+            </div>
+          </div>
+          <button onclick="closeNewSaleModal()" class="text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form id="newSaleForm" onsubmit="handleCreateSale(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
+          <input type="hidden" id="saleStockId" value="" />
+
+          <!-- Stoktan Hızlı Seçim (Opsiyonel) -->
+          <div id="stockQuickPickBox" class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Vitrin Stoğundan Hızlı Seç (Opsiyonel)</label>
+            <select id="saleStockSelector" onchange="fillSaleFromStock(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
+              <option value="">-- Manuel Cihaz Girişi Yapacağım --</option>
+            </select>
+          </div>
+
+          <!-- Müşteri İsim Soyisim & Telefon -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Müşteri İsim Soyisim *</label>
+              <input type="text" id="saleCustName" required placeholder="Örn: Mustafa Karahan" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Müşteri Telefon Numarası</label>
+              <input type="tel" id="saleCustPhone" placeholder="Örn: 0532 987 65 43" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+            </div>
+          </div>
+
+          <!-- Cihaz Marka / Model & IMEI -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Cihaz Marka / Model *</label>
+              <input type="text" id="saleDeviceModel" required placeholder="Örn: Apple iPhone 15 Pro 128GB" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">IMEI Numarası *</label>
+              <input type="text" id="saleImei" required maxlength="15" placeholder="15 haneli IMEI numarası" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm font-mono text-white outline-none" />
+            </div>
+          </div>
+
+          <!-- 0 / 2. El ve Yurt İçi / Yurt Dışı Seçimi -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-2">Satılan Cihaz Durumu *</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="cursor-pointer">
+                  <input type="radio" name="saleCondition" value="Sıfır (0)" checked class="peer sr-only" />
+                  <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-emerald-600/20 peer-checked:border-emerald-500 peer-checked:text-emerald-300 transition-all">
+                    Sıfır (0)
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="saleCondition" value="İkinci El (2. El)" class="peer sr-only" />
+                  <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-amber-600/20 peer-checked:border-amber-500 peer-checked:text-amber-300 transition-all">
+                    İkinci El (2. El)
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-2">Kayıt / Menşei Durumu *</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="cursor-pointer">
+                  <input type="radio" name="saleOrigin" value="Yurt İçi" checked class="peer sr-only" />
+                  <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-blue-600/20 peer-checked:border-blue-500 peer-checked:text-blue-300 transition-all">
+                    Yurt İçi
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="saleOrigin" value="Yurt Dışı" class="peer sr-only" />
+                  <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-purple-600/20 peer-checked:border-purple-500 peer-checked:text-purple-300 transition-all">
+                    Yurt Dışı
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Garanti Süresi, Maliyet, Satış Fiyatı & Ödeme -->
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Garanti Süresi *</label>
+              <select id="saleWarranty" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+                <option value="24 Ay (Distribütör)">24 Ay (Distribütör)</option>
+                <option value="12 Ay">12 Ay</option>
+                <option value="6 Ay">6 Ay</option>
+                <option value="3 Ay" selected>3 Ay</option>
+                <option value="1 Ay">1 Ay</option>
+                <option value="Garantisiz">Garantisiz</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Alış Maliyeti (₺)</label>
+              <input type="number" id="saleBuyPrice" value="0" min="0" oninput="calcSaleProfitPreview()" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Satış Fiyatı (₺) *</label>
+              <input type="number" id="salePrice" required min="0" placeholder="32500" oninput="calcSaleProfitPreview()" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm font-bold text-emerald-400 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Ödeme Yöntemi</label>
+              <select id="salePayment" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+                <option value="Nakit">Nakit</option>
+                <option value="Kredi Kartı">Kredi Kartı</option>
+                <option value="Havale / EFT">Havale / EFT</option>
+                <option value="Veresiye / Taksit">Veresiye / Taksit</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Notlar / Kutu-Fatura / Kozmetik Durum</label>
+            <input type="text" id="saleNotes" placeholder="Örn: Kapalı kutu faturalı veya Pil %89 hatasız cihaz" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+          </div>
+
+          <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="text-xs text-slate-400">
+              Satış Net Kârı: <span id="saleProfitPreview" class="font-bold text-emerald-400 text-sm">0 ₺</span>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button type="button" onclick="closeNewSaleModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-sm">İptal</button>
+              <button type="submit" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/20">
+                <i class="fa-solid fa-check mr-1.5"></i>Satışı Tamamla
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 6: YAZDIRILABİLİR SATIŞ & GARANTİ BELGESİ          -->
+  <!-- ======================================================== -->
+  <div id="saleReceiptModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
+        <div class="no-print px-5 py-3.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+          <span class="text-sm font-semibold text-white flex items-center gap-2">
+            <i class="fa-solid fa-file-shield text-emerald-400"></i> Cihaz Satış & Garanti Belgesi
+          </span>
+          <div class="flex items-center gap-2">
+            <button onclick="printSaleReceipt()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+              <i class="fa-solid fa-print"></i> Yazdır / PDF
+            </button>
+            <button onclick="closeSaleReceiptModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800">
+              <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="salePrintArea" class="bg-white text-slate-900 p-6 sm:p-8 text-xs leading-relaxed">
+          <div class="flex items-start justify-between border-b-2 border-slate-900 pb-4">
+            <div>
+              <h2 class="text-xl font-black tracking-tight uppercase">MERMER İLETİŞİM</h2>
+              <p class="text-[11px] text-slate-600 font-medium">Sıfır & İkinci El Cep Telefonu Satış - Teknik Servis</p>
+              <p class="text-[10px] text-slate-500 mt-1">Tel: 0 (332) 555 01 99 • Kulu / Konya</p>
+              <div class="mt-2 inline-block bg-slate-900 text-white font-mono font-bold px-2.5 py-1 rounded text-sm" id="srcp-saleNo">
+                SAT-2026-101
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="inline-block border-2 border-slate-900 px-2.5 py-1 font-black text-xs uppercase tracking-wider">SATIŞ & GARANTİ BELGESİ</span>
+              <p class="text-[11px] font-semibold mt-2" id="srcp-date">-</p>
+            </div>
+          </div>
+
+          <div class="py-3 border-b border-dashed border-slate-400">
+            <span class="text-[10px] uppercase text-slate-500 font-bold block">Alıcı (Müşteri) Bilgileri</span>
+            <p class="font-bold text-sm" id="srcp-custName">-</p>
+            <p class="text-slate-700" id="srcp-custPhone">-</p>
+          </div>
+
+          <div class="py-3 border-b border-dashed border-slate-400 space-y-1.5">
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Cihaz Marka / Model:</span>
+              <span class="font-bold text-sm" id="srcp-device">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">IMEI Numarası:</span>
+              <span class="font-mono font-bold" id="srcp-imei">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Cihaz Durumu:</span>
+              <span class="font-bold" id="srcp-condition">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Kayıt / Menşei Durumu:</span>
+              <span class="font-bold" id="srcp-origin">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Garanti Süresi:</span>
+              <span class="font-bold text-slate-900" id="srcp-warranty">-</span>
+            </div>
+          </div>
+
+          <div class="py-3 border-b border-slate-900 space-y-2">
+            <div>
+              <span class="text-[10px] uppercase text-slate-500 font-bold block">Cihaz Detayı / Notlar</span>
+              <p class="font-medium text-slate-800 bg-slate-100 p-2 rounded mt-1" id="srcp-notes">-</p>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+              <div>
+                <span class="text-slate-500 block text-[10px]">Ödeme Şekli</span>
+                <strong id="srcp-payment" class="text-xs">Nakit</strong>
+              </div>
+              <div class="text-right">
+                <span class="text-slate-500 block text-[10px]">Satış Bedeli</span>
+                <strong id="srcp-price" class="text-lg font-black">0 ₺</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="py-3 text-[9.5px] text-slate-600 space-y-1">
+            <p class="font-bold text-slate-800">SATIŞ & GARANTİ KOŞULLARI:</p>
+            <p>1. İşbu belge üzerinde IMEI numarası yazılı cihaz, belirtilen durum ve kayıt statüsüyle alıcıya çalışır vaziyette teslim edilmiştir.</p>
+            <p>2. Sıvı teması, darbe/kırılma ve yetkisiz müdahale kaynaklı arızalar garanti kapsamı dışındadır.</p>
+            <p>3. Yurt dışı cihazlarda yasal kullanım ve kayıt süreleri alıcının bilgisi dahilinde teslim edilmiştir.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 pt-4 mt-2 border-t border-slate-300 text-center">
+            <div>
+              <p class="font-bold text-[10px] uppercase text-slate-700">Teslim Alan (Müşteri İmza)</p>
+              <div class="h-12 border-b border-slate-400 mt-2"></div>
+            </div>
+            <div>
+              <p class="font-bold text-[10px] uppercase text-slate-700">Teslim Eden (Mermer İletişim)</p>
+              <div class="h-12 border-b border-slate-400 mt-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT UYGULAMA MANTIĞI                             -->
+  <!-- ======================================================== -->
+  <script>
+    // --- SABİTLER & DURUM LİSTESİ ---
+    const STATUSES = [
+      'Kabul Edildi',
+      'İnceleniyor',
+      'Müşteri Onayı Bekliyor',
+      'Parça Bekleniyor',
+      'Tamirde',
+      'Hazır',
+      'Teslim Edildi'
+    ];
+
+    const STATUS_STYLES = {
+      'Kabul Edildi': { bg: 'bg-slate-700/40', text: 'text-slate-200', border: 'border-slate-600/50', dot: 'bg-slate-400' },
+      'İnceleniyor': { bg: 'bg-sky-500/15', text: 'text-sky-300', border: 'border-sky-500/30', dot: 'bg-sky-400' },
+      'Müşteri Onayı Bekliyor': { bg: 'bg-amber-500/15', text: 'text-amber-300', border: 'border-amber-500/30', dot: 'bg-amber-400' },
+      'Parça Bekleniyor': { bg: 'bg-purple-500/15', text: 'text-purple-300', border: 'border-purple-500/30', dot: 'bg-purple-400' },
+      'Tamirde': { bg: 'bg-blue-500/15', text: 'text-blue-300', border: 'border-blue-500/30', dot: 'bg-blue-400' },
+      'Hazır': { bg: 'bg-emerald-500/15', text: 'text-emerald-300', border: 'border-emerald-500/30', dot: 'bg-emerald-400' },
+      'Teslim Edildi': { bg: 'bg-slate-800/60', text: 'text-slate-400', border: 'border-slate-700/60', dot: 'bg-slate-500' }
+    };
+
+    const STORAGE_KEY_ORDERS = 'mermer_iletisim_orders_v1';
+    const STORAGE_KEY_SALES = 'mermer_iletisim_sales_v1';
+    const STORAGE_KEY_DEVICE_STOCK = 'mermer_iletisim_device_stock_v1';
+
+    let orders = [];
+    let deviceSales = [];
+    let deviceStock = [];
+    let currentViewMode = 'cards'; // 'cards' veya 'kanban'
+    let currentSalesSubTab = 'soldList'; // 'soldList' veya 'stockList'
+
+    // --- BAŞLANGIÇ ÖRNEK VERİLERİ ---
+    function getDefaultOrders() {
+      const now = Date.now();
+      const dayMs = 24 * 60 * 60 * 1000;
+      return [
+        {
+          id: '1',
+          trackingNo: 'SRV-2026-101',
+          customerName: 'Mehmet Demir',
+          customerPhone: '0532 410 22 33',
+          deviceModel: 'iPhone 13',
+          imei: '358912094512341',
+          passcode: '2580',
+          cosmeticCondition: 'Kasa sağ üst köşede hafif ezik, ekran kırık',
+          accessories: ['Kılıf', 'SIM Kart'],
+          issueDesc: 'Ön ekran komple kırık, dokunmatik basmıyor. OLED ekran değişimi yapılacak.',
+          partCost: 1850,
+          customerPrice: 2900,
+          warranty: '6 Ay',
+          status: 'Hazır',
+          approved: true,
+          paymentMethod: 'Kart',
+          createdAt: now - (2 * dayMs)
+        },
+        {
+          id: '2',
+          trackingNo: 'SRV-2026-102',
+          customerName: 'Ayşe Kaya',
+          customerPhone: '0544 892 11 04',
+          deviceModel: 'Samsung Galaxy S23',
+          imei: '352109876543210',
+          passcode: 'Desen: L harfi',
+          cosmeticCondition: 'Temiz, kılcal çizikler mevcut',
+          accessories: ['Kılıf'],
+          issueDesc: 'Şarj almıyor, soket temassızlık yapıyor. Orijinal şarj bordu değişimi.',
+          partCost: 400,
+          customerPrice: 950,
+          warranty: '3 Ay',
+          status: 'Müşteri Onayı Bekliyor',
+          approved: false,
+          paymentMethod: 'Belirlenmedi',
+          createdAt: now - (1 * dayMs)
+        },
+        {
+          id: '3',
+          trackingNo: 'SRV-2026-103',
+          customerName: 'Caner Öztürk',
+          customerPhone: '0505 678 90 12',
+          deviceModel: 'Redmi Note 12 Pro',
+          imei: '864512049812399',
+          passcode: 'Yok',
+          cosmeticCondition: 'Arka kapak hafif açık (batarya şişmiş)',
+          accessories: ['SIM Kart', 'Hafıza Kartı'],
+          issueDesc: 'Batarya şişmesi ve %30 iken kapanma sorunu. Batarya değişimi.',
+          partCost: 350,
+          customerPrice: 800,
+          warranty: '3 Ay',
+          status: 'Tamirde',
+          approved: true,
+          paymentMethod: 'Nakit',
+          createdAt: now - (3 * dayMs)
+        },
+        {
+          id: '4',
+          trackingNo: 'SRV-2026-104',
+          customerName: 'Zeynep Arslan',
+          customerPhone: '0533 901 44 55',
+          deviceModel: 'iPhone 11',
+          imei: '356712098123456',
+          passcode: '1905',
+          cosmeticCondition: 'Ekran koruyucu çatlak, kasa temiz',
+          accessories: ['Şarj Kablosu'],
+          issueDesc: 'Sıvı teması sonrası açılmıyor. Anakart ultrasonik temizlik ve entegre kontrolü.',
+          partCost: 200,
+          customerPrice: 1200,
+          warranty: 'Yok',
+          status: 'İnceleniyor',
+          approved: false,
+          paymentMethod: 'Belirlenmedi',
+          createdAt: now
+        },
+        {
+          id: '5',
+          trackingNo: 'SRV-2026-100',
+          customerName: 'Burak Şahin',
+          customerPhone: '0555 234 56 78',
+          deviceModel: 'iPhone 13',
+          imei: '358912094512341', // Mehmet Demir ile aynı IMEI (geçmiş testi için)
+          passcode: '0000',
+          cosmeticCondition: 'Temiz',
+          accessories: [],
+          issueDesc: 'Ahize ses az gelme sorunu temizlendi.',
+          partCost: 0,
+          customerPrice: 300,
+          warranty: '3 Ay',
+          status: 'Teslim Edildi',
+          approved: true,
+          paymentMethod: 'Nakit',
+          createdAt: now - (14 * dayMs)
+        }
+      ];
+    }
+
+    function getDefaultDeviceSales() {
+      const now = Date.now();
+      const dayMs = 24 * 60 * 60 * 1000;
+      return [
+        {
+          id: 's1',
+          saleNo: 'SAT-2026-101',
+          customerName: 'Emre Yıldırım',
+          customerPhone: '0532 711 42 10',
+          deviceModel: 'Apple iPhone 15 Pro 256GB',
+          condition: 'Sıfır (0)',
+          origin: 'Yurt İçi',
+          imei: '354892104859102',
+          warranty: '24 Ay (Distribütör)',
+          buyPrice: 64000,
+          salePrice: 69500,
+          paymentMethod: 'Kredi Kartı',
+          notes: 'Kapalı kutu, Apple Türkiye garantili, faturalı.',
+          soldAt: now - (5 * dayMs)
+        },
+        {
+          id: 's2',
+          saleNo: 'SAT-2026-102',
+          customerName: 'Fatih Özkan',
+          customerPhone: '0541 330 88 99',
+          deviceModel: 'Apple iPhone 13 128GB',
+          condition: 'İkinci El (2. El)',
+          origin: 'Yurt İçi',
+          imei: '358912094512341', // Servis geçmişi entegrasyonu testi için ortak IMEI
+          warranty: '6 Ay',
+          buyPrice: 24500,
+          salePrice: 28000,
+          paymentMethod: 'Nakit',
+          notes: 'Pil sağlığı %90, değişensiz, kutusu mevcut.',
+          soldAt: now - (20 * dayMs)
+        },
+        {
+          id: 's3',
+          saleNo: 'SAT-2026-103',
+          customerName: 'Selin Aksoy',
+          customerPhone: '0507 412 55 66',
+          deviceModel: 'Samsung Galaxy S24 Ultra 512GB',
+          condition: 'Sıfır (0)',
+          origin: 'Yurt Dışı',
+          imei: '351908472615490',
+          warranty: '3 Ay',
+          buyPrice: 36000,
+          salePrice: 40500,
+          paymentMethod: 'Havale / EFT',
+          notes: 'Çift fiziki SIM, sıfır kapalı kutu.',
+          soldAt: now - (1 * dayMs)
+        }
+      ];
+    }
+
+    function getDefaultDeviceStock() {
+      return [
+        {
+          id: 'stk1',
+          deviceModel: 'Apple iPhone 14 Pro Max 256GB',
+          condition: 'İkinci El (2. El)',
+          origin: 'Yurt İçi',
+          imei: '357129048123881',
+          buyPrice: 39000,
+          targetPrice: 43500,
+          warranty: '6 Ay',
+          notes: 'Derin Mor, Pil %89, çiziksiz kozmetik + orijinal kablo.'
+        },
+        {
+          id: 'stk2',
+          deviceModel: 'Apple iPhone 16 Pro 128GB',
+          condition: 'Sıfır (0)',
+          origin: 'Yurt Dışı',
+          imei: '359012847120944',
+          buyPrice: 41500,
+          targetPrice: 45500,
+          warranty: '3 Ay',
+          notes: 'Çöl Titanyum, kapalı kutu.'
+        },
+        {
+          id: 'stk3',
+          deviceModel: 'Xiaomi 14T Pro 512GB',
+          condition: 'Sıfır (0)',
+          origin: 'Yurt İçi',
+          imei: '869102948172635',
+          buyPrice: 27000,
+          targetPrice: 31000,
+          warranty: '24 Ay (Distribütör)',
+          notes: 'Xiaomi Türkiye garantili, 120W şarj adaptörü kutuda.'
+        }
+      ];
+    }
+
+    // --- VERİ YÜKLEME & KAYDETME ---
+    function loadData() {
+      try {
+        const savedOrders = localStorage.getItem(STORAGE_KEY_ORDERS);
+        const savedSales = localStorage.getItem(STORAGE_KEY_SALES);
+        const savedStock = localStorage.getItem(STORAGE_KEY_DEVICE_STOCK);
+
+        orders = savedOrders ? JSON.parse(savedOrders) : getDefaultOrders();
+        deviceSales = savedSales ? JSON.parse(savedSales) : getDefaultDeviceSales();
+        deviceStock = savedStock ? JSON.parse(savedStock) : getDefaultDeviceStock();
+
+        if (!savedOrders) saveOrders();
+        if (!savedSales) saveDeviceSales();
+        if (!savedStock) saveDeviceStock();
+      } catch (e) {
+        console.error('Veri yükleme hatası:', e);
+        orders = getDefaultOrders();
+        deviceSales = getDefaultDeviceSales();
+        deviceStock = getDefaultDeviceStock();
+      }
+    }
+
+    function saveOrders() {
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+      updateDashboardStats();
+    }
+
+    function saveDeviceSales() {
+      localStorage.setItem(STORAGE_KEY_SALES, JSON.stringify(deviceSales));
+      updateDashboardStats();
+    }
+
+    function saveDeviceStock() {
+      localStorage.setItem(STORAGE_KEY_DEVICE_STOCK, JSON.stringify(deviceStock));
+      updateDashboardStats();
+    }
+
+    // --- YARDIMCI FONKSİYONLAR ---
+    function getDaysInService(createdAt) {
+      const diff = Date.now() - createdAt;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      if (days <= 0) return 'Bugün kabul';
+      return `${days} gündür serviste`;
+    }
+
+    function formatDate(ts) {
+      return new Date(ts).toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function formatCurrency(amount) {
+      return Number(amount || 0).toLocaleString('tr-TR') + ' ₺';
+    }
+
+    function generateNextTrackingNo() {
+      const year = new Date().getFullYear();
+      let maxNum = 100;
+      orders.forEach(o => {
+        const match = o.trackingNo.match(/(\d+)$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxNum) maxNum = num;
+        }
+      });
+      return `SRV-${year}-${maxNum + 1}`;
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const colors = type === 'success' 
+        ? 'bg-slate-900 border-emerald-500/50 text-emerald-300' 
+        : type === 'warning' 
+        ? 'bg-slate-900 border-amber-500/50 text-amber-300'
+        : 'bg-slate-900 border-blue-500/50 text-blue-300';
+      const icon = type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-circle-info text-blue-400';
+
+      toast.className = `pointer-events-auto border ${colors} px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium transition-all transform translate-y-2 opacity-0`;
+      toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${message}</span>`;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    // --- SEKME GEÇİŞLERİ ---
+    function switchTab(tabName) {
+      ['orders', 'sales', 'customer'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-${t}`);
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-400');
+      });
+
+      document.getElementById(`view-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+      activeBtn.classList.remove('text-slate-400');
+
+      if (tabName === 'sales') renderSalesModule();
+    }
+
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      document.getElementById('viewMode-cards').className = mode === 'cards' 
+        ? 'px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white transition-all'
+        : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all';
+      document.getElementById('viewMode-kanban').className = mode === 'kanban' 
+        ? 'px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white transition-all'
+        : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all';
+      renderOrders();
+    }
+
+    // --- DASHBOARD İSTATİSTİKLERİ ---
+    function updateDashboardStats() {
+      const activeOrders = orders.filter(o => o.status !== 'Teslim Edildi');
+      const approvalOrders = orders.filter(o => o.status === 'Müşteri Onayı Bekliyor');
+      const readyOrders = orders.filter(o => o.status === 'Hazır');
+
+      const totalRevenue = activeOrders.reduce((sum, o) => sum + Number(o.customerPrice || 0), 0);
+      const salesRevenue = deviceSales.reduce((sum, s) => sum + Number(s.salePrice || 0), 0);
+      const salesCost = deviceSales.reduce((sum, s) => sum + Number(s.buyPrice || 0), 0);
+      const salesProfit = salesRevenue - salesCost;
+
+      document.getElementById('stat-active').textContent = activeOrders.length;
+      document.getElementById('stat-approval').textContent = approvalOrders.length;
+      document.getElementById('stat-ready').textContent = readyOrders.length;
+      document.getElementById('stat-revenue').textContent = formatCurrency(totalRevenue);
+
+      document.getElementById('stat-sales-revenue').textContent = formatCurrency(salesRevenue);
+      document.getElementById('stat-sales-profit').textContent = `+${formatCurrency(salesProfit)}`;
+      document.getElementById('stat-stock-count').textContent = `${deviceStock.length} cihaz vitrinde`;
+      document.getElementById('stat-sales-count').textContent = `${deviceSales.length} satış`;
+    }
+
+    // --- İŞ EMİRLERİ LİSTELEME ---
+    function getFilteredOrders() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      return orders.filter(o => {
+        const matchesStatus = 
+          statusFilter === 'ALL' ? true :
+          statusFilter === 'ACTIVE' ? o.status !== 'Teslim Edildi' :
+          o.status === statusFilter;
+
+        const matchesQuery = !query || 
+          o.customerName.toLowerCase().includes(query) ||
+          o.customerPhone.toLowerCase().includes(query) ||
+          o.trackingNo.toLowerCase().includes(query) ||
+          o.deviceModel.toLowerCase().includes(query) ||
+          (o.imei && o.imei.toLowerCase().includes(query));
+
+        return matchesStatus && matchesQuery;
+      }).sort((a, b) => b.createdAt - a.createdAt);
+    }
+
+    function renderOrders() {
+      updateDashboardStats();
+      const filtered = getFilteredOrders();
+      const container = document.getElementById('ordersContainer');
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-12 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-slate-800 text-slate-400 flex items-center justify-center text-2xl mx-auto mb-3">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h3 class="text-base font-bold text-white">Kayıt Bulunamadı</h3>
+            <p class="text-sm text-slate-400 mt-1">Arama kriterlerinize uygun iş emri yok veya yeni cihaz kabulü yapabilirsiniz.</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (currentViewMode === 'kanban') {
+        renderKanbanView(filtered, container);
+      } else {
+        renderCardsView(filtered, container);
+      }
+    }
+
+    function renderCardsView(list, container) {
+      container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">${list.map(order => createOrderCardHTML(order)).join('')}</div>`;
+    }
+
+    function renderKanbanView(list, container) {
+      const cols = STATUSES.map(st => {
+        const items = list.filter(o => o.status === st);
+        const style = STATUS_STYLES[st];
+        return `
+          <div class="min-w-[290px] w-[290px] bg-slate-900/80 border border-slate-800 rounded-2xl flex flex-col max-h-[75vh]">
+            <div class="p-3.5 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900 rounded-t-2xl">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full ${style.dot}"></span>
+                <h4 class="text-xs font-bold text-slate-200">${st}</h4>
+              </div>
+              <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">${items.length}</span>
+            </div>
+            <div class="p-2.5 space-y-2.5 overflow-y-auto flex-1">
+              ${items.length === 0 
+                ? `<p class="text-xs text-slate-500 text-center py-6">Cihaz yok</p>` 
+                : items.map(o => createCompactKanbanCard(o)).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = `<div class="flex gap-4 overflow-x-auto pb-4">${cols}</div>`;
+    }
+
+    function createOrderCardHTML(order) {
+      const st = STATUS_STYLES[order.status] || STATUS_STYLES['Kabul Edildi'];
+      const daysText = getDaysInService(order.createdAt);
+      const isDelayed = (Date.now() - order.createdAt) > (3 * 24 * 60 * 60 * 1000) && order.status !== 'Teslim Edildi';
+
+      return `
+        <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 shadow-sm transition-all flex flex-col justify-between gap-4">
+          <!-- Üst Satır: Takip No, Süre Rozeti, Durum Seçici -->
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                ${order.trackingNo}
+              </span>
+              <span class="text-[11px] font-medium px-2.5 py-1 rounded-lg ${isDelayed ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30' : 'bg-slate-800 text-slate-300'}">
+                <i class="fa-regular fa-clock mr-1"></i>${daysText}
+              </span>
+            </div>
+
+            <!-- Hızlı Durum Değiştirme Dropdown -->
+            <select 
+              onchange="changeOrderStatus('${order.id}', this.value)" 
+              class="text-xs font-semibold px-3 py-1.5 rounded-xl border ${st.bg} ${st.text} ${st.border} outline-none cursor-pointer bg-slate-950"
+            >
+              ${STATUSES.map(s => `<option value="${s}" class="bg-slate-900 text-white" ${order.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+
+          <!-- Orta Satır: Cihaz & Müşteri -->
+          <div>
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                  ${order.deviceModel}
+                  ${order.approved 
+                    ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"><i class="fa-solid fa-check mr-1"></i>Fiyat Onaylı</span>` 
+                    : `<button onclick="toggleApproval('${order.id}')" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 transition-colors">Onay Bekliyor (İşaretle)</button>`
+                  }
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  <i class="fa-solid fa-user text-slate-500 mr-1"></i> ${order.customerName} • 
+                  <span class="text-slate-300">${order.customerPhone}</span>
+                </p>
+              </div>
+              <div class="text-right">
+                <span class="text-lg font-extrabold text-white block">${formatCurrency(order.customerPrice)}</span>
+              </div>
+            </div>
+
+            <!-- Arıza Açıklaması -->
+            <p class="text-xs text-slate-300 bg-slate-950/70 border border-slate-800/80 rounded-xl p-3 mt-3 leading-relaxed">
+              <strong class="text-slate-400">Arıza:</strong> ${order.issueDesc}
+            </p>
+
+            <!-- Ek Bilgiler: Şifre, Garanti, Aksesuarlar -->
+            <div class="flex flex-wrap items-center gap-2 mt-3 text-[11px] text-slate-400">
+              ${order.imei ? `<span class="bg-slate-800/70 px-2 py-0.5 rounded font-mono">IMEI: ${order.imei}</span>` : ''}
+              ${order.passcode ? `<span class="bg-slate-800/70 px-2 py-0.5 rounded"><i class="fa-solid fa-lock text-slate-500 mr-1"></i>${order.passcode}</span>` : ''}
+              <span class="bg-slate-800/70 px-2 py-0.5 rounded"><i class="fa-solid fa-shield-halved text-blue-400 mr-1"></i>Garanti: ${order.warranty}</span>
+              ${order.accessories && order.accessories.length > 0 ? `<span class="bg-slate-800/70 px-2 py-0.5 rounded">Aksesuar: ${order.accessories.join(', ')}</span>` : ''}
+            </div>
+          </div>
+
+          <!-- Alt Satır: Ödeme Türü & Aksiyon Butonları -->
+          <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+            <!-- Ödeme Türü -->
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] text-slate-500">Tahsilat:</span>
+              <select onchange="changePaymentMethod('${order.id}', this.value)" class="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-300 outline-none">
+                <option value="Belirlenmedi" ${order.paymentMethod === 'Belirlenmedi' ? 'selected' : ''}>Bekliyor</option>
+                <option value="Nakit" ${order.paymentMethod === 'Nakit' ? 'selected' : ''}>Nakit</option>
+                <option value="Kart" ${order.paymentMethod === 'Kart' ? 'selected' : ''}>Kredi Kartı</option>
+                <option value="Veresiye" ${order.paymentMethod === 'Veresiye' ? 'selected' : ''}>Veresiye</option>
+              </select>
+            </div>
+
+            <!-- Butonlar: WhatsApp, Fiş Yazdır, Sil -->
+            <div class="flex items-center gap-1.5">
+              <button onclick="sendWhatsAppMessage('${order.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-medium flex items-center gap-1.5 transition-colors" title="WhatsApp Bilgilendirme Gönder">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+                <span class="hidden sm:inline">WhatsApp</span>
+              </button>
+              <button onclick="openReceiptModal('${order.id}')" class="px-2.5 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-medium flex items-center gap-1.5 transition-colors" title="Müşteri Kabul Fişi Yazdır">
+                <i class="fa-solid fa-print"></i>
+                <span>Fiş</span>
+              </button>
+              <button onclick="deleteOrder('${order.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" title="Kaydı Sil">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function createCompactKanbanCard(order) {
+      return `
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2 hover:border-slate-700 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[11px] font-bold text-blue-400">${order.trackingNo}</span>
+            <span class="text-[10px] text-slate-400">${getDaysInService(order.createdAt)}</span>
+          </div>
+          <div>
+            <h5 class="text-xs font-bold text-white">${order.deviceModel}</h5>
+            <p class="text-[11px] text-slate-400">${order.customerName}</p>
+          </div>
+          <p class="text-[11px] text-slate-300 line-clamp-2">${order.issueDesc}</p>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+            <span class="text-xs font-bold text-emerald-400">${formatCurrency(order.customerPrice)}</span>
+            <div class="flex items-center gap-1">
+              <button onclick="sendWhatsAppMessage('${order.id}')" class="p-1.5 rounded bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25" title="WhatsApp"><i class="fa-brands fa-whatsapp text-xs"></i></button>
+              <button onclick="openReceiptModal('${order.id}')" class="p-1.5 rounded bg-blue-500/15 text-blue-400 hover:bg-blue-500/25" title="Fiş"><i class="fa-solid fa-print text-xs"></i></button>
+            </div>
+          </div>
+          <select onchange="changeOrderStatus('${order.id}', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-[11px] text-slate-300 outline-none">
+            ${STATUSES.map(s => `<option value="${s}" ${order.status === s ? 'selected' : ''}>Aşama: ${s}</option>`).join('')}
+          </select>
+        </div>
+      `;
+    }
+
+    // --- İŞ EMRİ İŞLEMLERİ ---
+    function changeOrderStatus(id, newStatus) {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      order.status = newStatus;
+      saveOrders();
+      renderOrders();
+      showToast(`${order.trackingNo} durumu "${newStatus}" olarak güncellendi.`);
+    }
+
+    function toggleApproval(id) {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      order.approved = !order.approved;
+      if (order.approved && order.status === 'Müşteri Onayı Bekliyor') {
+        order.status = 'Tamirde';
+      }
+      saveOrders();
+      renderOrders();
+      showToast(`${order.trackingNo} için müşteri fiyat onayı kaydedildi.`);
+    }
+
+    function changePaymentMethod(id, method) {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      order.paymentMethod = method;
+      saveOrders();
+      showToast(`Tahsilat yöntemi "${method}" olarak kaydedildi.`);
+    }
+
+    function deleteOrder(id) {
+      const idx = orders.findIndex(o => o.id === id);
+      if (idx === -1) return;
+      const removed = orders.splice(idx, 1)[0];
+      saveOrders();
+      renderOrders();
+      showToast(`${removed.trackingNo} kaydı silindi.`, 'warning');
+    }
+
+    // --- WHATSAPP BİLGİLENDİRME (mesaj + otomatik PDF) ---
+    const WA_URL_KEY = 'wa_backend_url';
+    const WA_KEY_KEY = 'wa_backend_key';
+
+    function buildStatusMessage(order) {
+      const total = formatCurrency(order.customerPrice).replace(' ₺', '₺');
+      return [
+        `Sayın ${order.customerName},`,
+        `${order.trackingNo} Numaralı ${order.deviceModel} cihazın servis durumu: ${order.status}`,
+        `Toplam Tutar: ${total}`,
+        `Bilgi İçin Bizi arayabilirsiniz`,
+        `-Mermer İletişim`
+      ].join('\n');
+    }
+
+    function normalizePhoneTR(raw) {
+      let p = String(raw || '').replace(/\D/g, '');
+      if (p.startsWith('00')) p = p.slice(2);
+      if (p.startsWith('0')) p = '9' + p;
+      if (p.length === 10) p = '90' + p;
+      return p;
+    }
+
+    // Fişi ekranda görünmeyen bir kopyadan PDF'e çevirir
+    async function generateReceiptPdf(order) {
+      fillReceipt(order);
+      const src = document.getElementById('printArea');
+      const holder = document.createElement('div');
+      holder.style.cssText = 'position:fixed;left:-10000px;top:0;width:520px;background:#fff;';
+      const clone = src.cloneNode(true);
+      clone.removeAttribute('id');
+      holder.appendChild(clone);
+      document.body.appendChild(holder);
+      try {
+        const blob = await html2pdf().set({
+          margin: 6,
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, backgroundColor: '#ffffff' },
+          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+        }).from(clone).outputPdf('blob');
+        return blob;
+      } finally {
+        document.body.removeChild(holder);
+      }
+    }
+
+    function downloadBlob(blob, filename) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    }
+
+    async function sendWhatsAppMessage(id) {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+
+      const message = buildStatusMessage(order);
+      const phone = normalizePhoneTR(order.customerPhone);
+      const backendUrl = (localStorage.getItem(WA_URL_KEY) || '').replace(/\/+$/, '');
+      const backendKey = localStorage.getItem(WA_KEY_KEY) || '';
+
+      showToast('Fiş PDF olarak hazırlanıyor...');
+      let pdfBlob = null;
+      try { pdfBlob = await generateReceiptPdf(order); }
+      catch (err) { console.error(err); showToast('PDF oluşturulamadı: ' + err.message, 'warning'); }
+
+      // A) WhatsApp Business API bağlıysa: mesaj + PDF otomatik gider
+      if (backendUrl) {
+        try {
+          const fd = new FormData();
+          fd.append('phone', phone);
+          fd.append('customerName', order.customerName);
+          fd.append('trackingNo', order.trackingNo);
+          fd.append('device', order.deviceModel);
+          fd.append('status', order.status);
+          fd.append('total', formatCurrency(order.customerPrice).replace(' ₺', '₺'));
+          fd.append('message', message);
+          if (pdfBlob) fd.append('pdf', pdfBlob, `${order.trackingNo}.pdf`);
+          const res = await fetch(backendUrl + '/api/send-status', {
+            method: 'POST',
+            headers: { 'x-api-key': backendKey },
+            body: fd
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) throw new Error(data.error || ('HTTP ' + res.status));
+          showToast(`${order.customerName} kişisine mesaj ve PDF gönderildi.`);
+          return;
+        } catch (err) {
+          console.error(err);
+          showToast('API ile gönderilemedi (' + err.message + '). Manuel WhatsApp açılıyor.', 'warning');
+        }
+      }
+
+      // B) API yoksa: PDF'i indir, mesajı wa.me ile aç (PDF'i elle eklemek gerekir)
+      if (pdfBlob) downloadBlob(pdfBlob, `${order.trackingNo}.pdf`);
+      try { await navigator.clipboard.writeText(message); } catch (e) {}
+      showToast('API bağlı değil: PDF indirildi, WhatsApp açılıyor (PDF’i elle ekleyin).', 'warning');
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    // --- WHATSAPP API AYARLARI ---
+    function openWaSettings() {
+      document.getElementById('waBackendUrl').value = localStorage.getItem(WA_URL_KEY) || '';
+      document.getElementById('waBackendKey').value = localStorage.getItem(WA_KEY_KEY) || '';
+      document.getElementById('waSettingsModal').classList.remove('hidden');
+    }
+    function closeWaSettings() {
+      document.getElementById('waSettingsModal').classList.add('hidden');
+    }
+    function saveWaSettings() {
+      localStorage.setItem(WA_URL_KEY, document.getElementById('waBackendUrl').value.trim());
+      localStorage.setItem(WA_KEY_KEY, document.getElementById('waBackendKey').value.trim());
+      closeWaSettings();
+      showToast('WhatsApp API ayarları kaydedildi.');
+    }
+    async function testWaBackend() {
+      const url = document.getElementById('waBackendUrl').value.trim().replace(/\/+$/, '');
+      if (!url) { showToast('Önce sunucu adresini yazın.', 'warning'); return; }
+      try {
+        const r = await fetch(url + '/health');
+        const d = await r.json();
+        showToast(d.ok ? 'Sunucu çalışıyor ✔' : 'Sunucu yanıt verdi ama hata var', d.ok ? 'success' : 'warning');
+      } catch (e) { showToast('Sunucuya ulaşılamadı: ' + e.message, 'warning'); }
+    }
+
+    // --- YENİ CİHAZ KABUL MODALI ---
+    function openNewOrderModal() {
+      document.getElementById('newOrderForm').reset();
+      document.getElementById('modalTrackingPreview').textContent = generateNextTrackingNo();
+      document.getElementById('imeiHistoryAlert').classList.add('hidden');
+      document.getElementById('newOrderModal').classList.remove('hidden');
+    }
+
+    function closeNewOrderModal() {
+      document.getElementById('newOrderModal').classList.add('hidden');
+    }
+
+    function applyPreset(desc, cost, price) {
+      const issueInput = document.getElementById('issueDesc');
+      issueInput.value = issueInput.value ? `${issueInput.value}, ${desc}` : desc;
+      // Fiyat belirtilmemiş hızlı seçeneklerde mevcut fiyat alanlarını koru.
+      if (price !== null) document.getElementById('customerPrice').value = price;
+      calculateNetProfitPreview();
+    }
+
+    function calculateNetProfitPreview() {
+      // İşlem maliyeti alanı kaldırıldı; müşteri fiyatı doğrudan kaydedilir.
+    }
+
+    function checkImeiHistory(imeiVal) {
+      const clean = imeiVal.trim();
+      const alertBox = document.getElementById('imeiHistoryAlert');
+      const detailsBox = document.getElementById('imeiHistoryDetails');
+
+      if (clean.length < 5) {
+        alertBox.classList.add('hidden');
+        return;
+      }
+
+      const serviceMatches = orders.filter(o => o.imei && o.imei.trim() === clean);
+      const saleMatches = deviceSales.filter(s => s.imei && s.imei.trim() === clean);
+
+      if (serviceMatches.length > 0 || saleMatches.length > 0) {
+        let html = '';
+        if (saleMatches.length > 0) {
+          html += saleMatches.map(s => `
+            <div class="bg-emerald-950/60 px-2.5 py-1.5 rounded border border-emerald-500/30 text-emerald-200">
+              <i class="fa-solid fa-certificate text-emerald-400 mr-1"></i>
+              <strong>MERMER İLETİŞİM SATIŞ KAYDI:</strong> Bu cihaz ${formatDate(s.soldAt)} tarihinde <strong>${s.customerName}</strong> adına satılmıştır (${s.condition} / ${s.origin} — Garanti: <strong>${s.warranty}</strong>).
+            </div>
+          `).join('');
+        }
+        if (serviceMatches.length > 0) {
+          html += serviceMatches.map(m => `
+            <div class="bg-amber-950/50 px-2.5 py-1.5 rounded border border-amber-500/20">
+              <strong>SERVİS GEÇMİŞİ (${m.trackingNo}):</strong> ${formatDate(m.createdAt)} — ${m.issueDesc} | Durum: <em>${m.status}</em> (Garanti: ${m.warranty})
+            </div>
+          `).join('');
+        }
+        detailsBox.innerHTML = html;
+        alertBox.classList.remove('hidden');
+      } else {
+        alertBox.classList.add('hidden');
+      }
+    }
+
+    function handleCreateOrder(e) {
+      e.preventDefault();
+      const trackingNo = generateNextTrackingNo();
+      const accessories = Array.from(document.querySelectorAll('input[name="accessories"]:checked')).map(cb => cb.value);
+
+      const newOrder = {
+        id: Date.now().toString(),
+        trackingNo,
+        customerName: document.getElementById('custName').value.trim(),
+        customerPhone: document.getElementById('custPhone').value.trim(),
+        deviceModel: document.getElementById('deviceModel').value.trim(),
+        imei: document.getElementById('deviceImei').value.trim(),
+        passcode: document.getElementById('devicePasscode').value.trim() || 'Belirtilmedi',
+        cosmeticCondition: document.getElementById('cosmeticCondition').value.trim() || 'Standart kullanım izleri',
+        accessories,
+        issueDesc: document.getElementById('issueDesc').value.trim(),
+        partCost: 0,
+        customerPrice: Number(document.getElementById('customerPrice').value || 0),
+        warranty: document.getElementById('warrantyPeriod').value,
+        receivedBy: document.getElementById('receivedBy').value,
+        status: 'Kabul Edildi',
+        approved: false,
+        paymentMethod: 'Belirlenmedi',
+        createdAt: Date.now()
+      };
+
+      orders.unshift(newOrder);
+      saveOrders();
+      renderOrders();
+      closeNewOrderModal();
+      showToast(`${trackingNo} numaralı iş emri oluşturuldu!`);
+    }
+
+    // --- FİŞ YAZDIRMA MODALI ---
+    function fillReceipt(order) {
+      document.getElementById('rcp-trackingNo').textContent = order.trackingNo;
+      document.getElementById('rcp-custName').textContent = order.customerName;
+      document.getElementById('rcp-custPhone').textContent = order.customerPhone;
+      document.getElementById('rcp-date').textContent = formatDate(order.createdAt);
+      document.getElementById('rcp-status').textContent = `Durum: ${order.status}`;
+      document.getElementById('rcp-device').textContent = order.deviceModel;
+      document.getElementById('rcp-imei').textContent = order.imei || 'Belirtilmedi';
+      document.getElementById('rcp-cosmetic').textContent = order.cosmeticCondition;
+      document.getElementById('rcp-accessories').textContent = (order.accessories && order.accessories.length > 0) ? order.accessories.join(', ') : 'Aksesuar bırakılmadı';
+      document.getElementById('rcp-issue').textContent = order.issueDesc;
+      document.getElementById('rcp-warranty').textContent = order.warranty;
+      document.getElementById('rcp-price').textContent = formatCurrency(order.customerPrice);
+      document.getElementById('rcp-receiver').textContent = order.receivedBy || '-';
+    }
+
+    function openReceiptModal(id) {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      fillReceipt(order);
+      document.getElementById('receiptModal').classList.remove('hidden');
+    }
+
+    function closeReceiptModal() {
+      document.getElementById('receiptModal').classList.add('hidden');
+    }
+
+    // ========================================================
+    // CİHAZ STOK & SATIŞ MODÜLÜ FONKSİYONLARI
+    // ========================================================
+    function switchSalesSubTab(subTab) {
+      currentSalesSubTab = subTab;
+      const isSold = subTab === 'soldList';
+      document.getElementById('sales-subview-soldList').classList.toggle('hidden', !isSold);
+      document.getElementById('sales-subview-stockList').classList.toggle('hidden', isSold);
+
+      document.getElementById('subtab-soldList').className = isSold
+        ? 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition-all flex items-center gap-2'
+        : 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2';
+
+      document.getElementById('subtab-stockList').className = !isSold
+        ? 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-blue-600 text-white transition-all flex items-center gap-2'
+        : 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2';
+    }
+
+    function generateNextSaleNo() {
+      const year = new Date().getFullYear();
+      let maxNum = 100;
+      deviceSales.forEach(s => {
+        const match = s.saleNo.match(/(\d+)$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxNum) maxNum = num;
+        }
+      });
+      return `SAT-${year}-${maxNum + 1}`;
+    }
+
+    function renderSalesModule() {
+      document.getElementById('countSoldBadge').textContent = deviceSales.length;
+      document.getElementById('countStockBadge').textContent = deviceStock.length;
+
+      const query = (document.getElementById('salesSearchInput')?.value || '').trim().toLowerCase();
+      const condFilter = document.getElementById('salesConditionFilter')?.value || 'ALL';
+      const origFilter = document.getElementById('salesOriginFilter')?.value || 'ALL';
+
+      // 1. Satılan Cihazları Filtrele & Render Et
+      const filteredSales = deviceSales.filter(s => {
+        const matchCond = condFilter === 'ALL' || s.condition === condFilter;
+        const matchOrig = origFilter === 'ALL' || s.origin === origFilter;
+        const matchQ = !query ||
+          s.customerName.toLowerCase().includes(query) ||
+          s.deviceModel.toLowerCase().includes(query) ||
+          s.imei.toLowerCase().includes(query) ||
+          s.saleNo.toLowerCase().includes(query);
+        return matchCond && matchOrig && matchQ;
+      }).sort((a, b) => b.soldAt - a.soldAt);
+
+      const soldContainer = document.getElementById('sales-subview-soldList');
+      if (filteredSales.length === 0) {
+        soldContainer.innerHTML = `
+          <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-10 text-center">
+            <p class="text-sm font-semibold text-slate-300">Kayıtlı cihaz satışı bulunamadı.</p>
+            <p class="text-xs text-slate-500 mt-1">Sağ üstteki "Cihaz Satışı Kaydet" butonundan yeni satış ekleyebilirsiniz.</p>
+          </div>
+        `;
+      } else {
+        soldContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">${filteredSales.map(s => createSoldDeviceCard(s)).join('')}</div>`;
+      }
+
+      // 2. Satılık Vitrin Stoğunu Filtrele & Render Et
+      const filteredStock = deviceStock.filter(st => {
+        const matchCond = condFilter === 'ALL' || st.condition === condFilter;
+        const matchOrig = origFilter === 'ALL' || st.origin === origFilter;
+        const matchQ = !query ||
+          st.deviceModel.toLowerCase().includes(query) ||
+          st.imei.toLowerCase().includes(query);
+        return matchCond && matchOrig && matchQ;
+      });
+
+      const stockContainer = document.getElementById('sales-subview-stockList');
+      if (filteredStock.length === 0) {
+        stockContainer.innerHTML = `
+          <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-10 text-center">
+            <p class="text-sm font-semibold text-slate-300">Vitrinde / stokta cihaz bulunamadı.</p>
+            <p class="text-xs text-slate-500 mt-1">"Stoğa Cihaz Ekle" butonunu kullanarak satılık 0 veya 2. el cihaz ekleyebilirsiniz.</p>
+          </div>
+        `;
+      } else {
+        stockContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${filteredStock.map(st => createStockDeviceCard(st)).join('')}</div>`;
+      }
+    }
+
+    function createSoldDeviceCard(s) {
+      const profit = Number(s.salePrice || 0) - Number(s.buyPrice || 0);
+      const isZero = s.condition === 'Sıfır (0)';
+      const isTR = s.origin === 'Yurt İçi';
+
+      return `
+        <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${s.saleNo}</span>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg ${isZero ? 'bg-blue-500/15 text-blue-300 border border-blue-500/30' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'}">
+                ${s.condition}
+              </span>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg ${isTR ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30' : 'bg-purple-500/15 text-purple-300 border border-purple-500/30'}">
+                ${s.origin}
+              </span>
+            </div>
+            <span class="text-[11px] text-slate-400">${formatDate(s.soldAt)}</span>
+          </div>
+
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h3 class="text-base font-bold text-white">${s.deviceModel}</h3>
+              <p class="text-xs text-slate-300 mt-0.5">
+                <i class="fa-solid fa-user text-slate-500 mr-1"></i> <strong>${s.customerName}</strong>
+                ${s.customerPhone ? `<span class="text-slate-400"> • ${s.customerPhone}</span>` : ''}
+              </p>
+              <div class="flex flex-wrap items-center gap-2 mt-2.5 text-[11px]">
+                <span class="bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg font-mono text-slate-300">IMEI: ${s.imei}</span>
+                <span class="bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg text-blue-300 font-semibold">
+                  <i class="fa-solid fa-shield-halved mr-1"></i>Garanti: ${s.warranty}
+                </span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-lg font-extrabold text-white block">${formatCurrency(s.salePrice)}</span>
+              <span class="text-[11px] font-semibold text-emerald-400">Kâr: ${formatCurrency(profit)}</span>
+              <span class="text-[10px] text-slate-500 block mt-0.5">${s.paymentMethod}</span>
+            </div>
+          </div>
+
+          ${s.notes ? `<p class="text-xs text-slate-400 bg-slate-950/60 border border-slate-800/80 rounded-xl px-3 py-2">${s.notes}</p>` : ''}
+
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+            <span class="text-[11px] text-slate-500">Alış: ${formatCurrency(s.buyPrice)}</span>
+            <div class="flex items-center gap-1.5">
+              ${s.customerPhone ? `
+                <button onclick="sendSaleWhatsApp('${s.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-medium flex items-center gap-1.5">
+                  <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                </button>
+              ` : ''}
+              <button onclick="openSaleReceiptModal('${s.id}')" class="px-2.5 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-medium flex items-center gap-1.5">
+                <i class="fa-solid fa-print"></i> Satış Belgesi
+              </button>
+              <button onclick="deleteDeviceSale('${s.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10" title="Satışı Sil">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function createStockDeviceCard(st) {
+      const isZero = st.condition === 'Sıfır (0)';
+      const isTR = st.origin === 'Yurt İçi';
+      const expectedProfit = Number(st.targetPrice || 0) - Number(st.buyPrice || 0);
+
+      return `
+        <div class="bg-slate-900 border border-slate-800 hover:border-blue-500/40 rounded-2xl p-5 flex flex-col justify-between gap-4">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${isZero ? 'bg-blue-500/15 text-blue-300 border border-blue-500/30' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'}">${st.condition}</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${isTR ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30' : 'bg-purple-500/15 text-purple-300 border border-purple-500/30'}">${st.origin}</span>
+              </div>
+              <button onclick="deleteDeviceStock('${st.id}')" class="text-slate-500 hover:text-rose-400 text-xs" title="Stoktan Sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+
+            <h4 class="text-base font-bold text-white">${st.deviceModel}</h4>
+            <p class="font-mono text-xs text-slate-400 mt-1">IMEI: ${st.imei}</p>
+            <p class="text-xs text-blue-300 mt-1"><i class="fa-solid fa-shield-halved mr-1"></i>Garanti: ${st.warranty}</p>
+            ${st.notes ? `<p class="text-xs text-slate-400 bg-slate-950/70 rounded-xl p-2.5 mt-2.5 border border-slate-800/80">${st.notes}</p>` : ''}
+          </div>
+
+          <div class="pt-3 border-t border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-slate-500 block">Alış Maliyeti</span>
+                <span class="text-xs font-semibold text-slate-300">${formatCurrency(st.buyPrice)}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-500 block">Etiket Fiyatı (+${formatCurrency(expectedProfit)})</span>
+                <span class="text-base font-extrabold text-emerald-400">${formatCurrency(st.targetPrice)}</span>
+              </div>
+            </div>
+            <button onclick="sellFromStock('${st.id}')" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-600/20">
+              <i class="fa-solid fa-handshake"></i>
+              <span>Bu Cihazı Sat</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- STOĞA CİHAZ EKLEME MODALI ---
+    function openAddDeviceStockModal() {
+      document.getElementById('addDeviceStockForm').reset();
+      document.getElementById('addDeviceStockModal').classList.remove('hidden');
+    }
+
+    function closeAddDeviceStockModal() {
+      document.getElementById('addDeviceStockModal').classList.add('hidden');
+    }
+
+    function handleAddDeviceStock(e) {
+      e.preventDefault();
+      const form = document.getElementById('addDeviceStockForm');
+      if (!form || !form.reportValidity()) return;
+      const model = document.getElementById('stkModel').value.trim();
+      if (!model) { showToast('Lütfen cihaz marka ve modelini girin.', 'warning'); return; }
+      const newStockItem = {
+        id: 'stk_' + Date.now(),
+        deviceModel: model,
+        imei: document.getElementById('stkImei').value.trim(),
+        condition: document.getElementById('stkCondition').value,
+        origin: document.getElementById('stkOrigin').value,
+        buyPrice: Number(document.getElementById('stkBuyPrice').value || 0),
+        targetPrice: Number(document.getElementById('stkTargetPrice').value || 0),
+        warranty: document.getElementById('stkWarranty').value,
+        notes: document.getElementById('stkNotes').value.trim()
+      };
+      deviceStock.unshift(newStockItem);
+      saveDeviceStock();
+      renderSalesModule();
+      switchSalesSubTab('stockList');
+      closeAddDeviceStockModal();
+      showToast('Satılık cihaz vitrin stoğuna eklendi.');
+    }
+
+    function deleteDeviceStock(id) {
+      deviceStock = deviceStock.filter(st => st.id !== id);
+      saveDeviceStock();
+      renderSalesModule();
+      showToast('Cihaz stoktan kaldırıldı.', 'warning');
+    }
+
+    // --- CİHAZ SATIŞI KAYDETME MODALI ---
+    function openNewSaleModal(preselectedStockId = '') {
+      document.getElementById('newSaleForm').reset();
+      document.getElementById('saleNoPreview').textContent = generateNextSaleNo();
+      document.getElementById('saleStockId').value = '';
+      document.getElementById('saleProfitPreview').textContent = '0 ₺';
+
+      const selector = document.getElementById('saleStockSelector');
+      selector.innerHTML = `<option value="">-- Manuel Cihaz Girişi Yapacağım --</option>` +
+        deviceStock.map(st => `<option value="${st.id}">${st.deviceModel} (${st.condition} / ${st.origin}) - IMEI: ${st.imei}</option>`).join('');
+
+      if (preselectedStockId) {
+        selector.value = preselectedStockId;
+        fillSaleFromStock(preselectedStockId);
+      }
+
+      document.getElementById('newSaleModal').classList.remove('hidden');
+    }
+
+    function closeNewSaleModal() {
+      document.getElementById('newSaleModal').classList.add('hidden');
+    }
+
+    function sellFromStock(stockId) {
+      openNewSaleModal(stockId);
+    }
+
+    function fillSaleFromStock(stockId) {
+      document.getElementById('saleStockId').value = stockId;
+      if (!stockId) return;
+      const item = deviceStock.find(st => st.id === stockId);
+      if (!item) return;
+
+      document.getElementById('saleDeviceModel').value = item.deviceModel;
+      document.getElementById('saleImei').value = item.imei;
+      document.getElementById('saleBuyPrice').value = item.buyPrice;
+      document.getElementById('salePrice').value = item.targetPrice;
+      document.getElementById('saleWarranty').value = item.warranty;
+      document.getElementById('saleNotes').value = item.notes || '';
+
+      document.querySelectorAll('input[name="saleCondition"]').forEach(r => {
+        r.checked = (r.value === item.condition);
+      });
+      document.querySelectorAll('input[name="saleOrigin"]').forEach(r => {
+        r.checked = (r.value === item.origin);
+      });
+
+      calcSaleProfitPreview();
+    }
+
+    function calcSaleProfitPreview() {
+      const buy = Number(document.getElementById('saleBuyPrice').value || 0);
+      const sell = Number(document.getElementById('salePrice').value || 0);
+      const profit = sell - buy;
+      const el = document.getElementById('saleProfitPreview');
+      el.textContent = formatCurrency(profit);
+      el.className = profit >= 0 ? 'font-bold text-emerald-400 text-sm' : 'font-bold text-rose-400 text-sm';
+    }
+
+    function handleCreateSale(e) {
+      e.preventDefault();
+      const saleNo = generateNextSaleNo();
+      const stockId = document.getElementById('saleStockId').value;
+      const condition = document.querySelector('input[name="saleCondition"]:checked')?.value || 'Sıfır (0)';
+      const origin = document.querySelector('input[name="saleOrigin"]:checked')?.value || 'Yurt İçi';
+
+      // Eğer stoktan seçildiyse vitrin stoğundan düş
+      if (stockId) {
+        deviceStock = deviceStock.filter(st => st.id !== stockId);
+        saveDeviceStock();
+      }
+
+      const newSale = {
+        id: 'sale_' + Date.now(),
+        saleNo,
+        customerName: document.getElementById('saleCustName').value.trim(),
+        customerPhone: document.getElementById('saleCustPhone').value.trim(),
+        deviceModel: document.getElementById('saleDeviceModel').value.trim(),
+        imei: document.getElementById('saleImei').value.trim(),
+        condition,
+        origin,
+        warranty: document.getElementById('saleWarranty').value,
+        buyPrice: Number(document.getElementById('saleBuyPrice').value || 0),
+        salePrice: Number(document.getElementById('salePrice').value || 0),
+        paymentMethod: document.getElementById('salePayment').value,
+        notes: document.getElementById('saleNotes').value.trim(),
+        soldAt: Date.now()
+      };
+
+      deviceSales.unshift(newSale);
+      saveDeviceSales();
+      renderSalesModule();
+      switchSalesSubTab('soldList');
+      closeNewSaleModal();
+      showToast(`${saleNo} numaralı cihaz satışı kaydedildi!`);
+    }
+
+    function deleteDeviceSale(id) {
+      deviceSales = deviceSales.filter(s => s.id !== id);
+      saveDeviceSales();
+      renderSalesModule();
+      showToast('Satış kaydı silindi.', 'warning');
+    }
+
+    function sendSaleWhatsApp(id) {
+      const s = deviceSales.find(item => item.id === id);
+      if (!s || !s.customerPhone) return;
+
+      const msg = `Sayın ${s.customerName}, Mermer İletişim'den satın aldığınız ${s.deviceModel} (${s.condition} / ${s.origin}, IMEI: ${s.imei}) cihazınızın satış kaydı oluşturulmuştur. Garanti Süresi: *${s.warranty}*, Tutar: *${formatCurrency(s.salePrice)}*. Hayırlı olsun! - Mermer İletişim`;
+
+      let cleanPhone = s.customerPhone.replace(/\D/g, '');
+      if (cleanPhone.startsWith('0')) cleanPhone = '9' + cleanPhone;
+      if (!cleanPhone.startsWith('90') && cleanPhone.length === 10) cleanPhone = '90' + cleanPhone;
+
+      window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // --- SATIŞ & GARANTİ BELGESİ YAZDIRMA ---
+    function openSaleReceiptModal(id) {
+      const s = deviceSales.find(item => item.id === id);
+      if (!s) return;
+
+      document.getElementById('srcp-saleNo').textContent = s.saleNo;
+      document.getElementById('srcp-date').textContent = formatDate(s.soldAt);
+      document.getElementById('srcp-custName').textContent = s.customerName;
+      document.getElementById('srcp-custPhone').textContent = s.customerPhone || 'Telefon belirtilmedi';
+      document.getElementById('srcp-device').textContent = s.deviceModel;
+      document.getElementById('srcp-imei').textContent = s.imei;
+      document.getElementById('srcp-condition').textContent = s.condition;
+      document.getElementById('srcp-origin').textContent = s.origin;
+      document.getElementById('srcp-warranty').textContent = s.warranty;
+      document.getElementById('srcp-notes').textContent = s.notes || 'Standart teslimat.';
+      document.getElementById('srcp-payment').textContent = s.paymentMethod;
+      document.getElementById('srcp-price').textContent = formatCurrency(s.salePrice);
+
+      document.getElementById('saleReceiptModal').classList.remove('hidden');
+    }
+
+    function closeSaleReceiptModal() {
+      document.getElementById('saleReceiptModal').classList.add('hidden');
+    }
+
+    function printSaleReceipt() {
+      const printContents = document.getElementById('salePrintArea').innerHTML;
+      const mainPrintArea = document.getElementById('printArea');
+      const backupHTML = mainPrintArea.innerHTML;
+      mainPrintArea.innerHTML = printContents;
+      window.print();
+      mainPrintArea.innerHTML = backupHTML;
+    }
+
+    // --- MÜŞTERİ DURUM SORGULAMA SİMÜLASYONU ---
+    function quickCustomerFill(code) {
+      document.getElementById('customerTrackInput').value = code;
+      trackDeviceCustomer();
+    }
+
+    function trackDeviceCustomer() {
+      const code = document.getElementById('customerTrackInput').value.trim().toUpperCase();
+      const resultArea = document.getElementById('customerResultArea');
+
+      if (!code) {
+        showToast('Lütfen bir takip numarası girin.', 'warning');
+        return;
+      }
+
+      const order = orders.find(o => o.trackingNo.toUpperCase() === code);
+      if (!order) {
+        resultArea.innerHTML = `
+          <div class="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-center text-rose-300">
+            <i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i>
+            <p class="font-bold">Kayıt Bulunamadı</p>
+            <p class="text-xs mt-1">"${code}" numarasına ait bir servis kaydı sistemde mevcut değil.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const currentIdx = STATUSES.indexOf(order.status);
+      const progressPercent = Math.round(((currentIdx + 1) / STATUSES.length) * 100);
+
+      resultArea.innerHTML = `
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+            <div>
+              <span class="font-mono text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-lg">${order.trackingNo}</span>
+              <h3 class="text-xl font-bold text-white mt-2">${order.deviceModel}</h3>
+              <p class="text-xs text-slate-400">Sayın ${order.customerName} • Kabul: ${formatDate(order.createdAt)}</p>
+            </div>
+            <div class="text-left sm:text-right">
+              <span class="text-xs text-slate-400 block">Güncel Durum</span>
+              <span class="inline-block mt-1 px-3 py-1 rounded-xl text-sm font-bold bg-blue-600 text-white shadow">
+                ${order.status}
+              </span>
+            </div>
+          </div>
+
+          <!-- İlerleme Çubuğu -->
+          <div>
+            <div class="flex justify-between text-xs text-slate-400 mb-2">
+              <span>Servis İlerlemesi</span>
+              <span class="font-bold text-blue-400">%${progressPercent}</span>
+            </div>
+            <div class="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+              <div class="h-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all duration-500" style="width: ${progressPercent}%"></div>
+            </div>
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-1 mt-3 text-[10px] text-center">
+              ${STATUSES.map((s, idx) => `
+                <div class="${idx <= currentIdx ? 'text-blue-400 font-bold' : 'text-slate-600'}">
+                  ${s}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Detay Kartları -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+              <span class="text-xs text-slate-400 block">Onarım Tutarı</span>
+              <strong class="text-lg font-extrabold text-white mt-1 block">${formatCurrency(order.customerPrice)}</strong>
+              <span class="text-[11px] ${order.approved ? 'text-emerald-400' : 'text-amber-400'}">
+                ${order.approved ? '✓ Müşteri onaylı' : '⏳ Onay bekleniyor'}
+              </span>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+              <span class="text-xs text-slate-400 block">Garanti Kapsamı</span>
+              <strong class="text-lg font-extrabold text-blue-400 mt-1 block">${order.warranty}</strong>
+              <span class="text-[11px] text-slate-400">Parça & İşçilik Garantisi</span>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+              <span class="text-xs text-slate-400 block">Serviste Geçen Süre</span>
+              <strong class="text-lg font-extrabold text-slate-200 mt-1 block">${getDaysInService(order.createdAt)}</strong>
+              <span class="text-[11px] text-slate-400">Tahsilat: ${order.paymentMethod}</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 text-xs text-slate-300">
+            <strong class="text-slate-400 block mb-1">Yapılan / Planlanan İşlem:</strong>
+            ${order.issueDesc}
+          </div>
+        </div>
+      `;
+    }
+
+    // --- SAYFA YÜKLENDİĞİNDE BAŞLAT ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      renderOrders();
+      renderSalesModule();
+    });
+  </script>
+</body>
+</html>
