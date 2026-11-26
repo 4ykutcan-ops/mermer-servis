@@ -1,0 +1,14 @@
+name = "mermer-whatsapp"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Güvenlik için "*" yerine GitHub Pages adresinizi yazın, örn: "https://kullanici.github.io"
+ALLOWED_ORIGIN = "*"
+
+# KV deposu: Cloudflare panelinde Storage & Databases -> KV -> Create ile oluşturup id'yi buraya yazın.
+[[kv_namespaces]]
+binding = "DB"
+id = "BURAYA_KV_NAMESPACE_ID"
+
+# API_KEY buraya YAZILMAZ; Cloudflare panelinden "Secret" olarak girilir.
