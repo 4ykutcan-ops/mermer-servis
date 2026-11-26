@@ -4,7 +4,7 @@ compatibility_date = "2025-01-01"
 
 [vars]
 # Güvenlik için "*" yerine GitHub Pages adresinizi yazın, örn: "https://kullanici.github.io"
-ALLOWED_ORIGIN = "*"
+ALLOWED_ORIGIN = "https://4ykutcan-ops.github.io"
 
 # KV deposu: Cloudflare panelinde Storage & Databases -> KV -> Create ile oluşturup id'yi buraya yazın.
 [[kv_namespaces]]
