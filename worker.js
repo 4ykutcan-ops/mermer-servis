@@ -45,8 +45,11 @@ export default {
 
     if (url.pathname === '/api/sync' && request.method === 'POST') {
       try {
-        if (!env.API_KEY || request.headers.get('x-api-key') !== env.API_KEY) {
-          return json(env, { ok: false, error: 'Yetkisiz (anahtar yanlış)' }, 401);
+        if (!env.API_KEY) {
+          return json(env, { ok: false, error: 'Sunucuda API_KEY tanımlı değil (Cloudflare\'de secret eklenmemiş veya yayın sonrası silinmiş)' }, 401);
+        }
+        if ((request.headers.get('x-api-key') || '').trim() !== String(env.API_KEY).trim()) {
+          return json(env, { ok: false, error: 'Anahtar yanlış (sitedeki ile Cloudflare\'deki aynı değil)' }, 401);
         }
         if (!env.DB) return json(env, { ok: false, error: 'KV bağlantısı (DB) tanımlı değil' }, 500);
 
