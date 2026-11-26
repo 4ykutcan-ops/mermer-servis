@@ -2,6 +2,12 @@ name = "mermer-whatsapp"
 main = "worker.js"
 compatibility_date = "2025-01-01"
 
+
+[observability.logs]
+enabled = false
+invocation_logs = true
+
+
 [vars]
 # Güvenlik için "*" yerine GitHub Pages adresinizi yazın, örn: "https://kullanici.github.io"
 ALLOWED_ORIGIN = "https://4ykutcan-ops.github.io"
