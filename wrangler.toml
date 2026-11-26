@@ -3,7 +3,7 @@ main = "worker.js"
 compatibility_date = "2025-01-01"
 
 [vars]
-PHONE_NUMBER_ID = "BURAYA_PHONE_NUMBER_ID"
+PHONE_NUMBER_ID = 1522570660937050"
 GRAPH_VERSION = "v21.0"
 TEMPLATE_NAME = "servis_durum_bildirimi"
 TEMPLATE_LANG = "tr"
