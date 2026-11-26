@@ -15,6 +15,6 @@ ALLOWED_ORIGIN = "https://4ykutcan-ops.github.io"
 # KV deposu: Cloudflare panelinde Storage & Databases -> KV -> Create ile oluşturup id'yi buraya yazın.
 [[kv_namespaces]]
 binding = "DB"
-id = "517ef8e3f7b2484e9b431732a35669d7"
+id = "517ef8e3f7b2484e9b431732a35669d7a"
 
 # API_KEY buraya YAZILMAZ; Cloudflare panelinden "Secret" olarak girilir.
