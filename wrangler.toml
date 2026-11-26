@@ -1,0 +1,11 @@
+name = "mermer-whatsapp"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+PHONE_NUMBER_ID = "BURAYA_PHONE_NUMBER_ID"
+GRAPH_VERSION = "v21.0"
+TEMPLATE_NAME = "servis_durum_bildirimi"
+TEMPLATE_LANG = "tr"
+ALLOWED_ORIGIN = "*"
+# WHATSAPP_TOKEN ve API_KEY buraya YAZILMAZ; Cloudflare panelinden "Secret" olarak girilir.
