@@ -97,11 +97,15 @@ export default {
         if (tooMany(ip)) return json(env, { ok: false, error: 'Çok fazla deneme yaptınız. Lütfen 10 dakika sonra tekrar deneyin.' }, 429);
 
         const body = await request.json().catch(() => ({}));
-        const code = String(body.trackingNo || '').trim().toUpperCase();
+        // Müşteri sadece numarayı yazar (SRV- sabit): "102" veya "SRV-102" ikisi de kabul edilir
+        const numOf = (v) => { const m = String(v || '').match(/(\d+)\s*$/); return m ? String(parseInt(m[1], 10)) : ''; };
+        const code = numOf(body.trackingNo);
         const last4 = digits(body.phone4);
         const stored = JSON.parse((await env.DB.get('db')) || '{}');
-        const o = arr(stored.orders).find(x => String(x.trackingNo || '').toUpperCase() === code);
-        if (!code || last4.length !== 4 || !o || digits(o.customerPhone).slice(-4) !== last4) {
+        const o = code && last4.length === 4
+          ? arr(stored.orders).find(x => numOf(x.trackingNo) === code && digits(x.customerPhone).slice(-4) === last4)
+          : null;
+        if (!o) {
           noteFail(ip);
           return json(env, { ok: false, error: 'Kayıt bulunamadı. Takip numarasını ve telefonunuzun son 4 hanesini kontrol edin.' }, 404);
         }
