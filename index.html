@@ -572,7 +572,7 @@
             </div>
             <div>
               <h3 class="font-bold text-lg text-white">Yeni Cihaz Kabul & İş Emri</h3>
-              <p class="text-xs text-slate-400">Otomatik Takip No: <span id="modalTrackingPreview" class="font-mono text-blue-400 font-bold">SRV-2026-105</span></p>
+              <p class="text-xs text-slate-400">Otomatik Takip No: <span id="modalTrackingPreview" class="font-mono text-blue-400 font-bold">SRV-102</span></p>
             </div>
           </div>
           <button onclick="closeNewOrderModal()" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition-colors">
@@ -1094,6 +1094,9 @@
   <!-- ======================================================== -->
   <script>
     // --- SABİTLER & DURUM LİSTESİ ---
+    // Müşteri takip sayfasının linki. Kısa link (örn. tinyurl.com/mermer-takip) oluşturduysanız buraya yazın.
+    const TRACK_LINK = 'https://tinyurl.com/servis-takip';
+
     const STATUSES = [
       'Kabul Edildi',
       'İnceleniyor',
@@ -1357,7 +1360,6 @@
     }
 
     function generateNextTrackingNo() {
-      const year = new Date().getFullYear();
       let maxNum = 100;
       orders.forEach(o => {
         const match = o.trackingNo.match(/(\d+)$/);
@@ -1366,7 +1368,7 @@
           if (num > maxNum) maxNum = num;
         }
       });
-      return `SRV-${year}-${maxNum + 1}`;
+      return `SRV-${maxNum + 1}`;
     }
 
     function showToast(message, type = 'success') {
@@ -1710,13 +1712,20 @@
       const total = (order.customerPrice === null || order.customerPrice === undefined)
         ? 'Arıza tespiti sonrası bildirilecektir'
         : formatCurrency(order.customerPrice).replace(' ₺', '₺');
-      return [
+      const lines = [
         `Sayın ${order.customerName},`,
         `${order.trackingNo} Numaralı ${order.deviceModel} cihazın servis durumu: ${order.status}`,
         `Toplam Tutar: ${total}`,
-        `Bilgi İçin Bizi arayabilirsiniz`,
-        `-Mermer İletişim`
-      ].join('\n');
+        `Bilgi İçin Bizi arayabilirsiniz`
+      ];
+      // Takip linki sadece ilk bilgilendirmede (Kabul Edildi) gönderilir
+      if (order.status === 'Kabul Edildi') {
+        const no = (String(order.trackingNo).match(/(\d+)\s*$/) || [])[1] || order.trackingNo;
+        lines.push(`Bu linkten sipariş durumunuzu takip edebilirsiniz: ${TRACK_LINK}`);
+        lines.push(`(Takip No: ${no} ve telefonunuzun son 4 hanesi)`);
+      }
+      lines.push(`-Mermer İletişim`);
+      return lines.join('\n');
     }
 
     function normalizePhoneTR(raw) {
