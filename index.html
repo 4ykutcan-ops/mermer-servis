@@ -497,7 +497,10 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="sm:col-span-2">
               <label class="block mb-1.5">Marka / Model *</label>
-              <input type="text" id="stkModel" required maxlength="100" placeholder="Örn. Apple iPhone 15 Pro 256GB" class="w-full px-3 py-2.5 text-sm" />
+              <div class="flex gap-2">
+                <select id="stkBrand" required data-brand-select class="w-2/5 px-3 py-2.5 text-sm"></select>
+                <input type="text" id="stkModel" required maxlength="100" placeholder="Model (örn. iPhone 15 Pro 256GB)" autocomplete="off" class="w-3/5 px-3 py-2.5 text-sm" />
+              </div>
             </div>
             <div>
               <label class="block mb-1.5">IMEI / Seri No</label>
@@ -633,21 +636,10 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Cihaz Marka / Model *</label>
-              <input type="text" id="deviceModel" list="deviceModelOptions" required placeholder="Model yazın veya listeden seçin" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
-              <datalist id="deviceModelOptions">
-                <option value="Apple iPhone 17 Pro Max"></option><option value="Apple iPhone 17 Pro"></option><option value="Apple iPhone 17 Air"></option><option value="Apple iPhone 17"></option>
-                <option value="Apple iPhone 16 Pro Max"></option><option value="Apple iPhone 16 Pro"></option><option value="Apple iPhone 16 Plus"></option><option value="Apple iPhone 16"></option>
-                <option value="Apple iPhone 15 Pro Max"></option><option value="Apple iPhone 15 Pro"></option><option value="Apple iPhone 15 Plus"></option><option value="Apple iPhone 15"></option>
-                <option value="Apple iPhone 14 Pro Max"></option><option value="Apple iPhone 14 Pro"></option><option value="Apple iPhone 14 Plus"></option><option value="Apple iPhone 14"></option>
-                <option value="Apple iPhone 13 Pro Max"></option><option value="Apple iPhone 13 Pro"></option><option value="Apple iPhone 13 mini"></option><option value="Apple iPhone 13"></option>
-                <option value="Apple iPhone 12 Pro Max"></option><option value="Apple iPhone 12 Pro"></option><option value="Apple iPhone 12 mini"></option><option value="Apple iPhone 12"></option>
-                <option value="Apple iPhone 11 Pro Max"></option><option value="Apple iPhone 11 Pro"></option><option value="Apple iPhone 11"></option><option value="Apple iPhone SE (2022)"></option>
-                <option value="Samsung Galaxy S25 Ultra"></option><option value="Samsung Galaxy S25+"></option><option value="Samsung Galaxy S25"></option><option value="Samsung Galaxy S24 Ultra"></option><option value="Samsung Galaxy S24+"></option><option value="Samsung Galaxy S24"></option><option value="Samsung Galaxy S23 Ultra"></option><option value="Samsung Galaxy S23+"></option><option value="Samsung Galaxy S23"></option><option value="Samsung Galaxy S22 Ultra"></option><option value="Samsung Galaxy S22+"></option><option value="Samsung Galaxy S22"></option><option value="Samsung Galaxy S21 FE"></option><option value="Samsung Galaxy S21 Ultra"></option><option value="Samsung Galaxy S21"></option>
-                <option value="Samsung Galaxy A56"></option><option value="Samsung Galaxy A55"></option><option value="Samsung Galaxy A54"></option><option value="Samsung Galaxy A53"></option><option value="Samsung Galaxy A36"></option><option value="Samsung Galaxy A35"></option><option value="Samsung Galaxy A34"></option><option value="Samsung Galaxy A25"></option><option value="Samsung Galaxy A24"></option><option value="Samsung Galaxy A15"></option><option value="Samsung Galaxy A14"></option>
-                <option value="Samsung Galaxy Z Fold7"></option><option value="Samsung Galaxy Z Flip7"></option><option value="Samsung Galaxy Z Fold6"></option><option value="Samsung Galaxy Z Flip6"></option><option value="Samsung Galaxy Z Fold5"></option><option value="Samsung Galaxy Z Flip5"></option>
-                <option value="Xiaomi 15 Ultra"></option><option value="Xiaomi 15"></option><option value="Xiaomi 14 Ultra"></option><option value="Xiaomi 14"></option><option value="Xiaomi 14T Pro"></option><option value="Xiaomi 14T"></option><option value="Xiaomi 13T Pro"></option><option value="Xiaomi 13T"></option><option value="Xiaomi 13 Pro"></option><option value="Xiaomi 13"></option><option value="Xiaomi 12T Pro"></option><option value="Xiaomi 12T"></option>
-                <option value="Redmi Note 14 Pro+ 5G"></option><option value="Redmi Note 14 Pro 5G"></option><option value="Redmi Note 14 Pro"></option><option value="Redmi Note 14"></option><option value="Redmi Note 13 Pro+ 5G"></option><option value="Redmi Note 13 Pro 5G"></option><option value="Redmi Note 13 Pro"></option><option value="Redmi Note 13"></option><option value="Redmi Note 12 Pro+ 5G"></option><option value="Redmi Note 12 Pro"></option><option value="Redmi Note 12"></option><option value="Redmi 14C"></option><option value="Redmi 13C"></option><option value="Redmi 13"></option><option value="Redmi 12"></option>
-              </datalist>
+              <div class="flex gap-2">
+                <select id="deviceBrand" required data-brand-select class="w-2/5 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"></select>
+                <input type="text" id="deviceModel" required placeholder="Model yazın (örn. iPhone 13)" autocomplete="off" class="w-3/5 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+              </div>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">IMEI / Seri No</label>
@@ -712,7 +704,10 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Müşteri Fiyatı (₺) *</label>
-              <input type="number" id="customerPrice" value="0" min="0" required oninput="calculateNetProfitPreview()" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm font-bold text-emerald-400 outline-none" />
+              <input type="number" id="customerPrice" value="0" min="0" required oninput="calculateNetProfitPreview()" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm font-bold text-emerald-400 outline-none disabled:opacity-40" />
+              <label class="flex items-center gap-1.5 mt-2 text-xs text-slate-300 cursor-pointer">
+                <input type="checkbox" id="priceUnspecified" onchange="togglePriceUnspecified()" class="rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0" /> Fiyat belirtilmedi (arıza tespit edilince bildirilecek)
+              </label>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Garanti Süresi</label>
@@ -767,7 +762,7 @@
             <div>
               <h2 class="text-xl font-black tracking-tight uppercase">MERMER İLETİŞİM</h2>
               <p class="text-[11px] text-slate-600 font-medium">Cep Telefonu Satış & Teknik Servis Merkezi</p>
-              <p class="text-[10px] text-slate-500 mt-1">Tel: 0 (537) 697 25 63 • Kulu / Konya</p>
+              <p class="text-[10px] text-slate-500 mt-1">Tel: 0 (332) 555 01 99 • Kulu / Konya</p>
               <div class="mt-2 inline-block bg-slate-900 text-white font-mono font-bold px-2.5 py-1 rounded text-sm" id="rcp-trackingNo">
                 SRV-2026-101
               </div>
@@ -913,7 +908,10 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Cihaz Marka / Model *</label>
-              <input type="text" id="saleDeviceModel" required placeholder="Örn: Apple iPhone 15 Pro 128GB" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+              <div class="flex gap-2">
+                <select id="saleBrand" required data-brand-select class="w-2/5 bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"></select>
+                <input type="text" id="saleDeviceModel" required placeholder="Model (örn. iPhone 15 Pro 128GB)" autocomplete="off" class="w-3/5 bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+              </div>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">IMEI Numarası *</label>
@@ -1350,7 +1348,38 @@
     }
 
     function formatCurrency(amount) {
+      if (amount === null || amount === undefined || amount === '') return 'Belirtilmedi';
       return Number(amount || 0).toLocaleString('tr-TR') + ' ₺';
+    }
+
+    // --- MARKA SEÇİMİ ---
+    const BRANDS = ['Apple', 'Samsung', 'Xiaomi', 'Redmi', 'Poco', 'Oppo', 'Realme', 'Honor', 'Huawei', 'Vivo', 'Infinix', 'Tecno', 'Spark', 'General Mobile', 'Reeder', 'Casper', 'Diğer'];
+
+    function initBrandSelects() {
+      document.querySelectorAll('select[data-brand-select]').forEach(sel => {
+        sel.innerHTML = '<option value="" selected disabled>Marka...</option>' +
+          BRANDS.map(b => `<option value="${b}" class="bg-slate-900 text-white">${b}</option>`).join('');
+      });
+    }
+
+    function composeModel(brandId, modelId) {
+      const brand = document.getElementById(brandId).value;
+      const model = document.getElementById(modelId).value.trim();
+      return brand === 'Diğer' ? model : `${brand} ${model}`.trim();
+    }
+
+    function splitBrandModel(full) {
+      const text = String(full || '').trim();
+      const brand = BRANDS.find(b => b !== 'Diğer' && text.toLowerCase().startsWith(b.toLowerCase() + ' '));
+      return brand ? { brand, model: text.slice(brand.length).trim() } : { brand: 'Diğer', model: text };
+    }
+
+    function togglePriceUnspecified() {
+      const on = document.getElementById('priceUnspecified').checked;
+      const input = document.getElementById('customerPrice');
+      input.disabled = on;
+      if (on) input.value = '';
+      else if (input.value === '') input.value = 0;
     }
 
     function generateNextTrackingNo() {
@@ -1655,7 +1684,7 @@
         showToast('Fiyat onaylandığı için değiştirilemez.', 'warning');
         return;
       }
-      const input = prompt(`${order.trackingNo} için yeni müşteri fiyatı (₺):`, order.customerPrice);
+      const input = prompt(`${order.trackingNo} için yeni müşteri fiyatı (₺):`, order.customerPrice ?? '');
       if (input === null) return;
       const price = Number(String(input).replace(',', '.').trim());
       if (!isFinite(price) || price < 0 || String(input).trim() === '') {
@@ -1672,6 +1701,10 @@
     function toggleApproval(id) {
       const order = orders.find(o => o.id === id);
       if (!order) return;
+      if (!order.approved && (order.customerPrice === null || order.customerPrice === undefined)) {
+        showToast('Önce "Fiyatı güncelle" ile bir fiyat girin, sonra onaylayın.', 'warning');
+        return;
+      }
       order.approved = !order.approved;
       if (order.approved && order.status === 'Müşteri Onayı Bekliyor') {
         order.status = 'Tamirde';
@@ -1700,7 +1733,9 @@
 
     // --- WHATSAPP BİLGİLENDİRME (manuel: mesaj hazır gelir, siz gönderirsiniz) ---
     function buildStatusMessage(order) {
-      const total = formatCurrency(order.customerPrice).replace(' ₺', '₺');
+      const total = (order.customerPrice === null || order.customerPrice === undefined)
+        ? 'Arıza tespiti sonrası bildirilecektir'
+        : formatCurrency(order.customerPrice).replace(' ₺', '₺');
       return [
         `Sayın ${order.customerName},`,
         `${order.trackingNo} Numaralı ${order.deviceModel} cihazın servis durumu: ${order.status}`,
@@ -1729,6 +1764,7 @@
     // --- YENİ CİHAZ KABUL MODALI ---
     function openNewOrderModal() {
       document.getElementById('newOrderForm').reset();
+      document.getElementById('customerPrice').disabled = false;
       document.getElementById('modalTrackingPreview').textContent = generateNextTrackingNo();
       document.getElementById('imeiHistoryAlert').classList.add('hidden');
       document.getElementById('newOrderModal').classList.remove('hidden');
@@ -1798,14 +1834,15 @@
         trackingNo,
         customerName: document.getElementById('custName').value.trim(),
         customerPhone: document.getElementById('custPhone').value.trim(),
-        deviceModel: document.getElementById('deviceModel').value.trim(),
+        brand: document.getElementById('deviceBrand').value,
+        deviceModel: composeModel('deviceBrand', 'deviceModel'),
         imei: document.getElementById('deviceImei').value.trim(),
         passcode: document.getElementById('devicePasscode').value.trim() || 'Belirtilmedi',
         cosmeticCondition: document.getElementById('cosmeticCondition').value.trim() || 'Standart kullanım izleri',
         accessories,
         issueDesc: document.getElementById('issueDesc').value.trim(),
         partCost: 0,
-        customerPrice: Number(document.getElementById('customerPrice').value || 0),
+        customerPrice: document.getElementById('priceUnspecified').checked ? null : Number(document.getElementById('customerPrice').value || 0),
         warranty: document.getElementById('warrantyPeriod').value,
         receivedBy: document.getElementById('receivedBy').value,
         status: 'Kabul Edildi',
@@ -2054,10 +2091,11 @@
       e.preventDefault();
       const form = document.getElementById('addDeviceStockForm');
       if (!form || !form.reportValidity()) return;
-      const model = document.getElementById('stkModel').value.trim();
-      if (!model) { showToast('Lütfen cihaz marka ve modelini girin.', 'warning'); return; }
+      const model = composeModel('stkBrand', 'stkModel');
+      if (!document.getElementById('stkModel').value.trim()) { showToast('Lütfen cihaz marka ve modelini girin.', 'warning'); return; }
       const newStockItem = {
         id: 'stk_' + Date.now(),
+        brand: document.getElementById('stkBrand').value,
         deviceModel: model,
         imei: document.getElementById('stkImei').value.trim(),
         condition: document.getElementById('stkCondition').value,
@@ -2115,7 +2153,9 @@
       const item = deviceStock.find(st => st.id === stockId);
       if (!item) return;
 
-      document.getElementById('saleDeviceModel').value = item.deviceModel;
+      const bm = splitBrandModel(item.deviceModel);
+      document.getElementById('saleBrand').value = bm.brand;
+      document.getElementById('saleDeviceModel').value = bm.model;
       document.getElementById('saleImei').value = item.imei;
       document.getElementById('saleBuyPrice').value = item.buyPrice;
       document.getElementById('salePrice').value = item.targetPrice;
@@ -2160,7 +2200,8 @@
         saleNo,
         customerName: document.getElementById('saleCustName').value.trim(),
         customerPhone: document.getElementById('saleCustPhone').value.trim(),
-        deviceModel: document.getElementById('saleDeviceModel').value.trim(),
+        brand: document.getElementById('saleBrand').value,
+        deviceModel: composeModel('saleBrand', 'saleDeviceModel'),
         imei: document.getElementById('saleImei').value.trim(),
         condition,
         origin,
@@ -2329,6 +2370,7 @@
 
     // --- SAYFA YÜKLENDİĞİNDE BAŞLAT ---
     window.addEventListener('DOMContentLoaded', () => {
+      initBrandSelects();
       loadData();
       renderOrders();
       renderSalesModule();
