@@ -180,6 +180,17 @@
     main .flex.bg-slate-950,main .flex.bg-slate-900.p-1{background:var(--soft)!important;border:0!important;padding:4px!important;border-radius:12px!important}
     main .flex.bg-slate-950 button,main .flex.bg-slate-900.p-1 button{border:0!important;background:transparent}
 
+    /* seçim butonları (0 / 2. El, Yurt İçi / Yurt Dışı): seçili olan açıkça belli olur */
+    .seg-opt>div{background:#fff!important;border:1.5px solid var(--line-2)!important;color:var(--mute)!important;border-radius:10px!important;font-weight:550!important;transition:all .12s}
+    .seg-opt:hover>div{border-color:var(--faint)!important;color:var(--ink)!important}
+    .seg-opt>input:checked+div{color:#fff!important;font-weight:700!important;box-shadow:0 1px 3px rgba(16,23,20,.25)!important}
+    .seg-opt>input:checked+div::before{content:"✓ ";font-weight:800}
+    .seg-opt[data-tone="em"]>input:checked+div{background:#0E7C57!important;border-color:#0E7C57!important}
+    .seg-opt[data-tone="amber"]>input:checked+div{background:#B45309!important;border-color:#B45309!important}
+    .seg-opt[data-tone="blue"]>input:checked+div{background:#2563A8!important;border-color:#2563A8!important}
+    .seg-opt[data-tone="purple"]>input:checked+div{background:#6D4AA8!important;border-color:#6D4AA8!important}
+    .seg-opt>input:focus-visible+div{outline:2px solid var(--em);outline-offset:2px}
+
     /* tables */
     main table{border-collapse:collapse!important}
     main thead th{background:var(--soft)!important;color:var(--mute)!important;border-bottom:1px solid var(--line)!important;font-size:12px!important;font-weight:550!important;padding:12px 16px!important}
@@ -427,6 +438,7 @@
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
             <input type="text" id="salesSearchInput" oninput="renderSalesModule()" placeholder="İsim, marka/model veya IMEI..." class="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-xl pl-8 pr-3 py-2 text-xs text-white outline-none" />
           </div>
+          <button type="button" onclick="openImeiScanner('salesSearchInput')" class="shrink-0 px-3 py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs" title="Kamera ile IMEI barkodu okutup ara" aria-label="Kamera ile IMEI barkodu okutup ara"><i class="fa-solid fa-camera"></i></button>
           <select id="salesConditionFilter" onchange="renderSalesModule()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none">
             <option value="ALL">0 & 2. El (Tümü)</option>
             <option value="Sıfır (0)">Sadece Sıfır (0)</option>
@@ -461,12 +473,13 @@
         <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
           <div>
             <p class="text-[10px] font-bold uppercase tracking-[.13em] text-slate-500 mb-1">CİHAZ ENVANTERİ</p>
-            <h3 class="text-lg font-bold text-slate-900">Stoğa cihaz ekle</h3>
+            <h3 id="stkModalTitle" class="text-lg font-bold text-slate-900">Stoğa cihaz ekle</h3>
             <p class="text-xs text-slate-500 mt-1">Satışa hazır cihazın bilgilerini kaydedin.</p>
           </div>
           <button type="button" onclick="closeAddDeviceStockModal()" class="text-slate-500 hover:text-slate-900 p-2" aria-label="Pencereyi kapat"><i class="fa-solid fa-xmark text-lg"></i></button>
         </div>
         <form id="addDeviceStockForm" onsubmit="handleAddDeviceStock(event)" class="p-6 space-y-5">
+          <input type="hidden" id="stkEditId" value="" />
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="sm:col-span-2">
               <label class="block mb-1.5">Marka / Model *</label>
@@ -475,7 +488,7 @@
                 <input type="text" id="stkModel" required maxlength="100" placeholder="Model (örn. iPhone 15 Pro 256GB)" autocomplete="off" class="w-3/5 px-3 py-2.5 text-sm" />
               </div>
             </div>
-            <div>
+            <div class="sm:col-span-2">
               <label class="block mb-1.5">IMEI / Seri No</label>
               <div class="flex gap-2"><input type="text" id="stkImei" maxlength="30" placeholder="IMEI veya seri numarası" class="w-full px-3 py-2.5 text-sm font-mono" /><button type="button" onclick="openImeiScanner('stkImei')" class="shrink-0 px-3.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-100" title="Kamera ile barkod oku" aria-label="Kamera ile barkod oku"><i class="fa-solid fa-camera"></i></button></div>
             </div>
@@ -516,7 +529,7 @@
             <p class="text-xs text-slate-500">Kaydedilen cihaz, satılık cihaz stoğu listesinde görünür.</p>
             <div class="flex gap-2">
               <button type="button" onclick="closeAddDeviceStockModal()" class="px-4 py-2.5 text-sm border border-slate-300 text-slate-600">Vazgeç</button>
-              <button type="submit" class="px-5 py-2.5 text-sm bg-blue-600 text-white"><i class="fa-solid fa-check mr-1.5"></i>Stoğa Kaydet</button>
+              <button type="submit" class="px-5 py-2.5 text-sm bg-blue-600 text-white"><i class="fa-solid fa-check mr-1.5"></i><span id="stkSubmitText">Stoğa Kaydet</span></button>
             </div>
           </div>
         </form>
@@ -911,13 +924,13 @@
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-2">Satılan Cihaz Durumu *</label>
               <div class="grid grid-cols-2 gap-2">
-                <label class="cursor-pointer">
+                <label class="cursor-pointer seg-opt" data-tone="em">
                   <input type="radio" name="saleCondition" value="Sıfır (0)" checked class="peer sr-only" />
                   <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-emerald-600/20 peer-checked:border-emerald-500 peer-checked:text-emerald-300 transition-all">
                     Sıfır (0)
                   </div>
                 </label>
-                <label class="cursor-pointer">
+                <label class="cursor-pointer seg-opt" data-tone="amber">
                   <input type="radio" name="saleCondition" value="İkinci El (2. El)" class="peer sr-only" />
                   <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-amber-600/20 peer-checked:border-amber-500 peer-checked:text-amber-300 transition-all">
                     İkinci El (2. El)
@@ -929,13 +942,13 @@
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-2">Kayıt / Menşei Durumu *</label>
               <div class="grid grid-cols-2 gap-2">
-                <label class="cursor-pointer">
+                <label class="cursor-pointer seg-opt" data-tone="blue">
                   <input type="radio" name="saleOrigin" value="Yurt İçi" checked class="peer sr-only" />
                   <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-blue-600/20 peer-checked:border-blue-500 peer-checked:text-blue-300 transition-all">
                     Yurt İçi
                   </div>
                 </label>
-                <label class="cursor-pointer">
+                <label class="cursor-pointer seg-opt" data-tone="purple">
                   <input type="radio" name="saleOrigin" value="Yurt Dışı" class="peer sr-only" />
                   <div class="text-center py-2 px-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-semibold text-slate-400 peer-checked:bg-purple-600/20 peer-checked:border-purple-500 peer-checked:text-purple-300 transition-all">
                     Yurt Dışı
@@ -945,8 +958,8 @@
             </div>
           </div>
 
-          <!-- Garanti Süresi, Maliyet, Satış Fiyatı & Ödeme -->
-          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <!-- Garanti Süresi, Satış Fiyatı & Ödeme -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Garanti Süresi *</label>
               <select id="saleWarranty" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
@@ -2031,7 +2044,10 @@
                 <span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${isZero ? 'bg-blue-500/15 text-blue-300 border border-blue-500/30' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'}">${st.condition}</span>
                 <span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${isTR ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30' : 'bg-purple-500/15 text-purple-300 border border-purple-500/30'}">${st.origin}</span>
               </div>
-              <button onclick="deleteDeviceStock('${st.id}')" class="text-slate-500 hover:text-rose-400 text-xs" title="Stoktan Sil"><i class="fa-solid fa-trash-can"></i></button>
+              <div class="flex items-center gap-3">
+                <button onclick="openEditDeviceStock('${st.id}')" class="text-slate-500 hover:text-blue-400 text-xs" title="Düzenle" aria-label="Cihazı düzenle"><i class="fa-solid fa-pen-to-square"></i> Düzenle</button>
+                <button onclick="deleteDeviceStock('${st.id}')" class="text-slate-500 hover:text-rose-400 text-xs" title="Stoktan Sil" aria-label="Stoktan sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
             </div>
 
             <h4 class="text-base font-bold text-white">${st.deviceModel}</h4>
@@ -2059,7 +2075,30 @@
     // --- STOĞA CİHAZ EKLEME MODALI ---
     function openAddDeviceStockModal() {
       document.getElementById('addDeviceStockForm').reset();
+      document.getElementById('stkEditId').value = '';
+      document.getElementById('stkModalTitle').textContent = 'Stoğa cihaz ekle';
+      document.getElementById('stkSubmitText').textContent = 'Stoğa Kaydet';
       document.getElementById('addDeviceStockModal').classList.remove('hidden');
+    }
+
+    function openEditDeviceStock(id) {
+      const st = deviceStock.find(x => x.id === id);
+      if (!st) return;
+      openAddDeviceStockModal();
+      const bm = st.brand && st.deviceModel.toLowerCase().startsWith(String(st.brand).toLowerCase() + ' ')
+        ? { brand: st.brand, model: st.deviceModel.slice(st.brand.length).trim() }
+        : (st.brand === 'Diğer' ? { brand: 'Diğer', model: st.deviceModel } : splitBrandModel(st.deviceModel));
+      document.getElementById('stkEditId').value = id;
+      document.getElementById('stkModalTitle').textContent = 'Stoktaki cihazı düzenle';
+      document.getElementById('stkSubmitText').textContent = 'Değişiklikleri Kaydet';
+      document.getElementById('stkBrand').value = bm.brand;
+      document.getElementById('stkModel').value = bm.model;
+      document.getElementById('stkImei').value = st.imei || '';
+      document.getElementById('stkCondition').value = st.condition;
+      document.getElementById('stkOrigin').value = st.origin;
+      document.getElementById('stkWarranty').value = st.warranty;
+      document.getElementById('stkTargetPrice').value = st.targetPrice;
+      document.getElementById('stkNotes').value = st.notes || '';
     }
 
     function closeAddDeviceStockModal() {
@@ -2072,8 +2111,9 @@
       if (!form || !form.reportValidity()) return;
       const model = composeModel('stkBrand', 'stkModel');
       if (!document.getElementById('stkModel').value.trim()) { showToast('Lütfen cihaz marka ve modelini girin.', 'warning'); return; }
+      const editId = document.getElementById('stkEditId').value;
       const newStockItem = {
-        id: 'stk_' + Date.now(),
+        id: editId || 'stk_' + Date.now(),
         brand: document.getElementById('stkBrand').value,
         deviceModel: model,
         imei: document.getElementById('stkImei').value.trim(),
@@ -2083,12 +2123,14 @@
         warranty: document.getElementById('stkWarranty').value,
         notes: document.getElementById('stkNotes').value.trim()
       };
-      deviceStock.unshift(newStockItem);
+      const idx = editId ? deviceStock.findIndex(x => x.id === editId) : -1;
+      if (idx >= 0) deviceStock[idx] = Object.assign({}, deviceStock[idx], newStockItem);
+      else deviceStock.unshift(newStockItem);
       saveDeviceStock();
       renderSalesModule();
       switchSalesSubTab('stockList');
       closeAddDeviceStockModal();
-      showToast('Satılık cihaz vitrin stoğuna eklendi.');
+      showToast(idx >= 0 ? 'Stoktaki cihaz güncellendi.' : 'Satılık cihaz vitrin stoğuna eklendi.');
     }
 
     function deleteDeviceStock(id) {
@@ -2197,7 +2239,19 @@
       const s = deviceSales.find(item => item.id === id);
       if (!s || !s.customerPhone) return;
 
-      const msg = `Sayın ${s.customerName}, Mermer İletişim'den satın aldığınız ${s.deviceModel} (${s.condition} / ${s.origin}, IMEI: ${s.imei}) cihazınızın satış kaydı oluşturulmuştur. Garanti Süresi: *${s.warranty}*, Tutar: *${formatCurrency(s.salePrice)}*. Hayırlı olsun! - Mermer İletişim`;
+      const msg = [
+        `Sayın ${s.customerName},`,
+        `Mermer İletişim'den satın aldığınız cihazın satış kaydı oluşturulmuştur.`,
+        ``,
+        `Cihaz: ${s.deviceModel}`,
+        `Durum: ${s.condition} / ${s.origin}`,
+        `IMEI: ${s.imei}`,
+        `Garanti: ${s.warranty}`,
+        `Tutar: ${formatCurrency(s.salePrice)}`,
+        ``,
+        `Hayırlı olsun, bizi tercih ettiğiniz için teşekkür ederiz.`,
+        `-Mermer İletişim`
+      ].join('\n');
 
       let cleanPhone = s.customerPhone.replace(/\D/g, '');
       if (cleanPhone.startsWith('0')) cleanPhone = '9' + cleanPhone;
