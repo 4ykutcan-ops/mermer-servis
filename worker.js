@@ -37,6 +37,24 @@ function mergeDeleted(a, b) {
   return out;
 }
 
+// --- Müşteri takip sorgusu (herkese açık; sadece takip no + telefonun son 4 hanesi ile) ---
+const attempts = new Map(); // IP -> { n, t }  (en iyi çaba: Worker bellek içi sayaç)
+function tooMany(ip) {
+  const now = Date.now(), rec = attempts.get(ip);
+  if (!rec || now - rec.t > 10 * 60 * 1000) return false;
+  return rec.n >= 10;
+}
+function noteFail(ip) {
+  const now = Date.now(), rec = attempts.get(ip);
+  if (!rec || now - rec.t > 10 * 60 * 1000) attempts.set(ip, { n: 1, t: now });
+  else rec.n++;
+  if (attempts.size > 5000) attempts.clear();
+}
+function maskName(name) {
+  return String(name || '').trim().split(/\s+/).map((w, i, a) => (i === a.length - 1 && a.length > 1) ? w[0] + '.' : w).join(' ');
+}
+const digits = (v) => String(v || '').replace(/\D/g, '');
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -70,6 +88,37 @@ export default {
         return json(env, { ok: true, data: merged });
       } catch (err) {
         return json(env, { ok: false, error: err.message }, 500);
+      }
+    }
+    if (url.pathname === '/api/track' && request.method === 'POST') {
+      try {
+        if (!env.DB) return json(env, { ok: false, error: 'Sistem hazır değil' }, 500);
+        const ip = request.headers.get('cf-connecting-ip') || 'x';
+        if (tooMany(ip)) return json(env, { ok: false, error: 'Çok fazla deneme yaptınız. Lütfen 10 dakika sonra tekrar deneyin.' }, 429);
+
+        const body = await request.json().catch(() => ({}));
+        const code = String(body.trackingNo || '').trim().toUpperCase();
+        const last4 = digits(body.phone4);
+        const stored = JSON.parse((await env.DB.get('db')) || '{}');
+        const o = arr(stored.orders).find(x => String(x.trackingNo || '').toUpperCase() === code);
+        if (!code || last4.length !== 4 || !o || digits(o.customerPhone).slice(-4) !== last4) {
+          noteFail(ip);
+          return json(env, { ok: false, error: 'Kayıt bulunamadı. Takip numarasını ve telefonunuzun son 4 hanesini kontrol edin.' }, 404);
+        }
+        // Sadece müşterinin görmesi gereken alanlar (IMEI, şifre, telefon, tahsilat vb. verilmez)
+        return json(env, { ok: true, order: {
+          trackingNo: o.trackingNo,
+          customerName: maskName(o.customerName),
+          deviceModel: o.deviceModel,
+          status: o.status,
+          createdAt: o.createdAt,
+          issueDesc: o.issueDesc,
+          customerPrice: o.customerPrice === undefined ? null : o.customerPrice,
+          approved: !!o.approved,
+          warranty: o.warranty
+        } });
+      } catch (err) {
+        return json(env, { ok: false, error: 'Sorgu yapılamadı' }, 500);
       }
     }
     return json(env, { ok: false, error: 'Bulunamadı' }, 404);
