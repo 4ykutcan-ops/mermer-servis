@@ -21,7 +21,10 @@
   label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
   input{width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
   input:focus{outline:2px solid var(--em);outline-offset:1px}
-  #no{text-transform:uppercase;letter-spacing:.05em}
+  .grp{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden}
+  .grp:focus-within{outline:2px solid var(--em);outline-offset:1px}
+  .grp span{display:grid;place-items:center;padding:0 12px;font-weight:700;color:var(--mute);border-right:1px solid var(--line);letter-spacing:.05em}
+  .grp input{border:0;border-radius:0;background:transparent;outline:0!important;letter-spacing:.05em}
   button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:12px;background:var(--em);color:#fff;font:inherit;font-weight:650;cursor:pointer}
   button:disabled{opacity:.6;cursor:default}
   .err{background:var(--red-s);color:var(--red);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:14px}
@@ -56,9 +59,9 @@
 
   <form id="form" class="card" autocomplete="off">
     <h1>Cihazınızın durumunu öğrenin</h1>
-    <p class="sub">Servis fişinizdeki takip numarasını ve kayıtlı telefon numaranızın son 4 hanesini girin.</p>
+    <p class="sub">Servis fişinizdeki takip numarasını (SRV- den sonraki rakamlar) ve kayıtlı telefon numaranızın son 4 hanesini girin.</p>
     <label for="no">Takip Numarası</label>
-    <input id="no" required placeholder="SRV-2026-101" maxlength="30">
+    <div class="grp"><span>SRV-</span><input id="no" required inputmode="numeric" pattern="[0-9]{1,6}" maxlength="6" placeholder="102"></div>
     <label for="p4">Telefon Numaranızın Son 4 Hanesi</label>
     <input id="p4" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="4567">
     <button id="btn" type="submit">Sorgula</button>
@@ -80,7 +83,7 @@ const fmtDate = (t) => new Date(t).toLocaleDateString('tr-TR', { day: '2-digit',
 const money = (v) => Number(v).toLocaleString('tr-TR') + ' ₺';
 
 // Adres çubuğundan ön doldurma: takip.html?no=SRV-2026-101
-try { const n = new URLSearchParams(location.search).get('no'); if (n) $('no').value = n.toUpperCase(); } catch (e) {}
+try { const n = new URLSearchParams(location.search).get('no'); if (n) $('no').value = (n.match(/(\d+)\s*$/) || [''])[1]; } catch (e) {}
 
 function showError(msg) { const e = $('err'); e.textContent = msg; e.classList.remove('hide'); }
 
@@ -130,7 +133,7 @@ $('form').addEventListener('submit', async (e) => {
     const res = await fetch(API_URL.replace(/\/+$/, '') + '/api/track', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ trackingNo: $('no').value.trim(), phone4: $('p4').value.trim() })
+      body: JSON.stringify({ trackingNo: $('no').value.replace(/\D/g, ''), phone4: $('p4').value.trim() })
     });
     const d = await res.json().catch(() => ({}));
     if (!res.ok || !d.ok) throw new Error(d.error || 'Sorgu yapılamadı. Lütfen daha sonra tekrar deneyin.');
