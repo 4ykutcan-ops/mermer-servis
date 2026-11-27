@@ -242,7 +242,6 @@
         <nav class="flex items-center overflow-x-auto max-w-full">
           <button onclick="switchTab('orders')" id="tab-orders" class="nav-btn flex items-center gap-2 bg-blue-600 text-white whitespace-nowrap"><i class="fa-solid fa-screwdriver-wrench"></i><span>İş Emirleri</span></button>
           <button onclick="switchTab('sales')" id="tab-sales" class="nav-btn flex items-center gap-2 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-mobile-screen"></i><span>Cihaz Satış &amp; Stok</span></button>
-          <button onclick="switchTab('customer')" id="tab-customer" class="nav-btn flex items-center gap-2 text-slate-400 whitespace-nowrap"><i class="fa-solid fa-qrcode"></i><span>Müşteri Sorgu</span></button>
         </nav>
         <div class="flex items-center gap-2">
           <button onclick="openNewOrderModal()" class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600"><i class="fa-solid fa-plus"></i><span>Yeni Cihaz Kabul</span></button>
@@ -452,31 +451,6 @@
     <!-- ========================================== -->
     <!-- SEKME 4: MÜŞTERİ DURUM SORGULAMA EKRANI    -->
     <!-- ========================================== -->
-    <section id="view-customer" class="hidden max-w-2xl mx-auto space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center shadow-xl">
-        <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-3xl mx-auto mb-4">
-          <i class="fa-solid fa-qrcode"></i>
-        </div>
-        <h2 class="text-2xl font-extrabold text-white">Cihaz Durum Sorgulama</h2>
-        <p class="text-sm text-slate-400 mt-1.5">Mermer İletişim servis fişinizde yer alan takip numarasını girerek cihazınızın güncel durumunu öğrenebilirsiniz.</p>
-
-        <div class="mt-6 flex flex-col sm:flex-row gap-2.5">
-          <input 
-            type="text" 
-            id="customerTrackInput" 
-            placeholder="Örn: SRV-2026-101" 
-            class="flex-1 bg-slate-950 border border-slate-700 focus:border-blue-500 rounded-xl px-4 py-3 text-center sm:text-left font-mono uppercase text-white tracking-wider outline-none"
-          />
-          <button onclick="trackDeviceCustomer()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg shadow-blue-600/25">
-            Sorgula
-          </button>
-        </div>
-
-      </div>
-
-      <!-- Sorgu Sonucu Alanı -->
-      <div id="customerResultArea"></div>
-    </section>
 
   </main>
 
@@ -1421,7 +1395,7 @@
 
     // --- SEKME GEÇİŞLERİ ---
     function switchTab(tabName) {
-      ['orders', 'sales', 'customer'].forEach(t => {
+      ['orders', 'sales'].forEach(t => {
         document.getElementById(`view-${t}`).classList.add('hidden');
         const btn = document.getElementById(`tab-${t}`);
         btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
@@ -2273,99 +2247,6 @@
       mainPrintArea.innerHTML = printContents;
       window.print();
       mainPrintArea.innerHTML = backupHTML;
-    }
-
-    // --- MÜŞTERİ DURUM SORGULAMA SİMÜLASYONU ---
-    function quickCustomerFill(code) {
-      document.getElementById('customerTrackInput').value = code;
-      trackDeviceCustomer();
-    }
-
-    function trackDeviceCustomer() {
-      const code = document.getElementById('customerTrackInput').value.trim().toUpperCase();
-      const resultArea = document.getElementById('customerResultArea');
-
-      if (!code) {
-        showToast('Lütfen bir takip numarası girin.', 'warning');
-        return;
-      }
-
-      const order = orders.find(o => o.trackingNo.toUpperCase() === code);
-      if (!order) {
-        resultArea.innerHTML = `
-          <div class="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-center text-rose-300">
-            <i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i>
-            <p class="font-bold">Kayıt Bulunamadı</p>
-            <p class="text-xs mt-1">"${code}" numarasına ait bir servis kaydı sistemde mevcut değil.</p>
-          </div>
-        `;
-        return;
-      }
-
-      const currentIdx = STATUSES.indexOf(order.status);
-      const progressPercent = Math.round(((currentIdx + 1) / STATUSES.length) * 100);
-
-      resultArea.innerHTML = `
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
-            <div>
-              <span class="font-mono text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-lg">${order.trackingNo}</span>
-              <h3 class="text-xl font-bold text-white mt-2">${order.deviceModel}</h3>
-              <p class="text-xs text-slate-400">Sayın ${order.customerName} • Kabul: ${formatDate(order.createdAt)}</p>
-            </div>
-            <div class="text-left sm:text-right">
-              <span class="text-xs text-slate-400 block">Güncel Durum</span>
-              <span class="inline-block mt-1 px-3 py-1 rounded-xl text-sm font-bold bg-blue-600 text-white shadow">
-                ${order.status}
-              </span>
-            </div>
-          </div>
-
-          <!-- İlerleme Çubuğu -->
-          <div>
-            <div class="flex justify-between text-xs text-slate-400 mb-2">
-              <span>Servis İlerlemesi</span>
-              <span class="font-bold text-blue-400">%${progressPercent}</span>
-            </div>
-            <div class="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
-              <div class="h-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all duration-500" style="width: ${progressPercent}%"></div>
-            </div>
-            <div class="grid grid-cols-4 sm:grid-cols-7 gap-1 mt-3 text-[10px] text-center">
-              ${STATUSES.map((s, idx) => `
-                <div class="${idx <= currentIdx ? 'text-blue-400 font-bold' : 'text-slate-600'}">
-                  ${s}
-                </div>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Detay Kartları -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
-              <span class="text-xs text-slate-400 block">Onarım Tutarı</span>
-              <strong class="text-lg font-extrabold text-white mt-1 block">${formatCurrency(order.customerPrice)}</strong>
-              <span class="text-[11px] ${order.approved ? 'text-emerald-400' : 'text-amber-400'}">
-                ${order.approved ? '✓ Müşteri onaylı' : '⏳ Onay bekleniyor'}
-              </span>
-            </div>
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
-              <span class="text-xs text-slate-400 block">Garanti Kapsamı</span>
-              <strong class="text-lg font-extrabold text-blue-400 mt-1 block">${order.warranty}</strong>
-              <span class="text-[11px] text-slate-400">Parça & İşçilik Garantisi</span>
-            </div>
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
-              <span class="text-xs text-slate-400 block">Serviste Geçen Süre</span>
-              <strong class="text-lg font-extrabold text-slate-200 mt-1 block">${getDaysInService(order.createdAt)}</strong>
-              <span class="text-[11px] text-slate-400">Tahsilat: ${order.paymentMethod}</span>
-            </div>
-          </div>
-
-          <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 text-xs text-slate-300">
-            <strong class="text-slate-400 block mb-1">Yapılan / Planlanan İşlem:</strong>
-            ${order.issueDesc}
-          </div>
-        </div>
-      `;
     }
 
     // --- SAYFA YÜKLENDİĞİNDE BAŞLAT ---
