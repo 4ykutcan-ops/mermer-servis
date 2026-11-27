@@ -305,10 +305,9 @@
         <div class="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all cursor-pointer" onclick="switchTab('sales')">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Cihaz Satış Ciro / Kâr</p>
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Cihaz Satış Cirosu</p>
               <div class="flex items-baseline gap-2 mt-1">
                 <h3 id="stat-sales-revenue" class="text-2xl font-extrabold text-emerald-400">0 ₺</h3>
-                <span id="stat-sales-profit" class="text-xs font-bold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-lg">+0 ₺</span>
               </div>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
@@ -478,7 +477,7 @@
             </div>
             <div>
               <label class="block mb-1.5">IMEI / Seri No</label>
-              <input type="text" id="stkImei" maxlength="30" placeholder="IMEI veya seri numarası" class="w-full px-3 py-2.5 text-sm font-mono" />
+              <div class="flex gap-2"><input type="text" id="stkImei" maxlength="30" placeholder="IMEI veya seri numarası" class="w-full px-3 py-2.5 text-sm font-mono" /><button type="button" onclick="openImeiScanner('stkImei')" class="shrink-0 px-3.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-100" title="Kamera ile barkod oku" aria-label="Kamera ile barkod oku"><i class="fa-solid fa-camera"></i></button></div>
             </div>
             <div>
               <label class="block mb-1.5">Cihaz Durumu *</label>
@@ -505,10 +504,6 @@
               </select>
             </div>
             <div>
-              <label class="block mb-1.5">Alış Fiyatı (₺) *</label>
-              <input type="number" id="stkBuyPrice" required min="0" step="1" placeholder="0" class="w-full px-3 py-2.5 text-sm" />
-            </div>
-            <div>
               <label class="block mb-1.5">Satış / Etiket Fiyatı (₺) *</label>
               <input type="number" id="stkTargetPrice" required min="0" step="1" placeholder="0" class="w-full px-3 py-2.5 text-sm" />
             </div>
@@ -529,6 +524,24 @@
     </div>
   </div>
 
+
+  <!-- Barkod / IMEI okuyucu (kamera) -->
+  <div id="imeiScanModal" class="fixed inset-0 z-[70] hidden bg-slate-950/90 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full shadow-2xl p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-camera text-emerald-400"></i> IMEI Barkodu Okut</h3>
+          <button type="button" onclick="closeImeiScanner()" class="text-slate-400 hover:text-white p-1.5" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p class="text-xs text-slate-400">Cihazın kutusundaki veya arkasındaki IMEI barkodunu kameraya tutun. Telefonlarda <strong>*#06#</strong> ile çıkan ekranda da barkod görünür.</p>
+        <div id="imeiScanReader" class="w-full rounded-xl overflow-hidden bg-black min-h-[200px]"></div>
+        <p id="imeiScanStatus" class="text-xs text-slate-300 min-h-[1.25rem]">Kamera başlatılıyor…</p>
+        <div id="imeiScanUse" class="hidden">
+          <button type="button" onclick="useScannedAnyway()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm text-white">Okunan değeri yine de kullan</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Ortak veritabanı (senkron) -->
   <button id="syncBtn" onclick="openSyncSettings()" class="no-print fixed bottom-5 left-5 z-30 text-xs font-semibold px-3.5 py-2.5 rounded-full shadow-lg flex items-center gap-2" style="background:#101714;color:#fff" title="Ortak veritabanı ayarları">
@@ -617,7 +630,7 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">IMEI / Seri No</label>
-              <input type="text" id="deviceImei" oninput="checkImeiHistory(this.value)" placeholder="356789012345678" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm font-mono text-white outline-none" />
+              <div class="flex gap-2"><input type="text" id="deviceImei" oninput="checkImeiHistory(this.value)" placeholder="356789012345678" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-sm font-mono text-white outline-none" /><button type="button" onclick="openImeiScanner('deviceImei')" class="shrink-0 px-3.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-100" title="Kamera ile barkod oku" aria-label="Kamera ile barkod oku"><i class="fa-solid fa-camera"></i></button></div>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Cihaz Ekran Şifresi / Desen</label>
@@ -889,7 +902,7 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">IMEI Numarası *</label>
-              <input type="text" id="saleImei" required maxlength="15" placeholder="15 haneli IMEI numarası" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm font-mono text-white outline-none" />
+              <div class="flex gap-2"><input type="text" id="saleImei" required maxlength="15" placeholder="15 haneli IMEI numarası" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm font-mono text-white outline-none" /><button type="button" onclick="openImeiScanner('saleImei')" class="shrink-0 px-3.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-100" title="Kamera ile barkod oku" aria-label="Kamera ile barkod oku"><i class="fa-solid fa-camera"></i></button></div>
             </div>
           </div>
 
@@ -946,12 +959,8 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Alış Maliyeti (₺)</label>
-              <input type="number" id="saleBuyPrice" value="0" min="0" oninput="calcSaleProfitPreview()" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none" />
-            </div>
-            <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Satış Fiyatı (₺) *</label>
-              <input type="number" id="salePrice" required min="0" placeholder="32500" oninput="calcSaleProfitPreview()" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm font-bold text-emerald-400 outline-none" />
+              <input type="number" id="salePrice" required min="0" placeholder="32500" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm font-bold text-emerald-400 outline-none" />
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Ödeme Yöntemi</label>
@@ -970,10 +979,7 @@
           </div>
 
           <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div class="text-xs text-slate-400">
-              Satış Net Kârı: <span id="saleProfitPreview" class="font-bold text-emerald-400 text-sm">0 ₺</span>
-            </div>
-            <div class="flex items-center gap-2 w-full sm:w-auto">
+            <div class="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
               <button type="button" onclick="closeNewSaleModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-sm">İptal</button>
               <button type="submit" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/20">
                 <i class="fa-solid fa-check mr-1.5"></i>Satışı Tamamla
@@ -1431,8 +1437,6 @@
 
       const totalRevenue = activeOrders.reduce((sum, o) => sum + Number(o.customerPrice || 0), 0);
       const salesRevenue = deviceSales.reduce((sum, s) => sum + Number(s.salePrice || 0), 0);
-      const salesCost = deviceSales.reduce((sum, s) => sum + Number(s.buyPrice || 0), 0);
-      const salesProfit = salesRevenue - salesCost;
 
       document.getElementById('stat-active').textContent = activeOrders.length;
       document.getElementById('stat-approval').textContent = approvalOrders.length;
@@ -1440,7 +1444,6 @@
       document.getElementById('stat-revenue').textContent = formatCurrency(totalRevenue);
 
       document.getElementById('stat-sales-revenue').textContent = formatCurrency(salesRevenue);
-      document.getElementById('stat-sales-profit').textContent = `+${formatCurrency(salesProfit)}`;
       document.getElementById('stat-stock-count').textContent = `${deviceStock.length} cihaz vitrinde`;
       document.getElementById('stat-sales-count').textContent = `${deviceSales.length} satış`;
     }
@@ -1956,7 +1959,6 @@
     }
 
     function createSoldDeviceCard(s) {
-      const profit = Number(s.salePrice || 0) - Number(s.buyPrice || 0);
       const isZero = s.condition === 'Sıfır (0)';
       const isTR = s.origin === 'Yurt İçi';
 
@@ -1991,7 +1993,6 @@
             </div>
             <div class="text-right">
               <span class="text-lg font-extrabold text-white block">${formatCurrency(s.salePrice)}</span>
-              <span class="text-[11px] font-semibold text-emerald-400">Kâr: ${formatCurrency(profit)}</span>
               <span class="text-[10px] text-slate-500 block mt-0.5">${s.paymentMethod}</span>
             </div>
           </div>
@@ -1999,7 +2000,7 @@
           ${s.notes ? `<p class="text-xs text-slate-400 bg-slate-950/60 border border-slate-800/80 rounded-xl px-3 py-2">${s.notes}</p>` : ''}
 
           <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
-            <span class="text-[11px] text-slate-500">Alış: ${formatCurrency(s.buyPrice)}</span>
+            <span></span>
             <div class="flex items-center gap-1.5">
               ${s.customerPhone ? `
                 <button onclick="sendSaleWhatsApp('${s.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-medium flex items-center gap-1.5">
@@ -2021,7 +2022,6 @@
     function createStockDeviceCard(st) {
       const isZero = st.condition === 'Sıfır (0)';
       const isTR = st.origin === 'Yurt İçi';
-      const expectedProfit = Number(st.targetPrice || 0) - Number(st.buyPrice || 0);
 
       return `
         <div class="bg-slate-900 border border-slate-800 hover:border-blue-500/40 rounded-2xl p-5 flex flex-col justify-between gap-4">
@@ -2042,12 +2042,8 @@
 
           <div class="pt-3 border-t border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
-              <div>
-                <span class="text-[10px] text-slate-500 block">Alış Maliyeti</span>
-                <span class="text-xs font-semibold text-slate-300">${formatCurrency(st.buyPrice)}</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[10px] text-slate-500 block">Etiket Fiyatı (+${formatCurrency(expectedProfit)})</span>
+              <div class="text-left">
+                <span class="text-[10px] text-slate-500 block">Etiket Fiyatı</span>
                 <span class="text-base font-extrabold text-emerald-400">${formatCurrency(st.targetPrice)}</span>
               </div>
             </div>
@@ -2083,7 +2079,6 @@
         imei: document.getElementById('stkImei').value.trim(),
         condition: document.getElementById('stkCondition').value,
         origin: document.getElementById('stkOrigin').value,
-        buyPrice: Number(document.getElementById('stkBuyPrice').value || 0),
         targetPrice: Number(document.getElementById('stkTargetPrice').value || 0),
         warranty: document.getElementById('stkWarranty').value,
         notes: document.getElementById('stkNotes').value.trim()
@@ -2108,7 +2103,6 @@
       document.getElementById('newSaleForm').reset();
       document.getElementById('saleNoPreview').textContent = generateNextSaleNo();
       document.getElementById('saleStockId').value = '';
-      document.getElementById('saleProfitPreview').textContent = '0 ₺';
 
       const selector = document.getElementById('saleStockSelector');
       selector.innerHTML = `<option value="">-- Manuel Cihaz Girişi Yapacağım --</option>` +
@@ -2140,7 +2134,6 @@
       document.getElementById('saleBrand').value = bm.brand;
       document.getElementById('saleDeviceModel').value = bm.model;
       document.getElementById('saleImei').value = item.imei;
-      document.getElementById('saleBuyPrice').value = item.buyPrice;
       document.getElementById('salePrice').value = item.targetPrice;
       document.getElementById('saleWarranty').value = item.warranty;
       document.getElementById('saleNotes').value = item.notes || '';
@@ -2152,16 +2145,6 @@
         r.checked = (r.value === item.origin);
       });
 
-      calcSaleProfitPreview();
-    }
-
-    function calcSaleProfitPreview() {
-      const buy = Number(document.getElementById('saleBuyPrice').value || 0);
-      const sell = Number(document.getElementById('salePrice').value || 0);
-      const profit = sell - buy;
-      const el = document.getElementById('saleProfitPreview');
-      el.textContent = formatCurrency(profit);
-      el.className = profit >= 0 ? 'font-bold text-emerald-400 text-sm' : 'font-bold text-rose-400 text-sm';
     }
 
     async function handleCreateSale(e) {
@@ -2189,7 +2172,6 @@
         condition,
         origin,
         warranty: document.getElementById('saleWarranty').value,
-        buyPrice: Number(document.getElementById('saleBuyPrice').value || 0),
         salePrice: Number(document.getElementById('salePrice').value || 0),
         paymentMethod: document.getElementById('salePayment').value,
         notes: document.getElementById('saleNotes').value.trim(),
@@ -2258,6 +2240,91 @@
       mainPrintArea.innerHTML = backupHTML;
     }
 
+    // --- KAMERA İLE IMEI / BARKOD OKUMA ---
+    let imeiScanner = null, imeiScanTarget = '', imeiScanLast = '';
+    const SCANNER_LIBS = [
+      'https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js',
+      'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'
+    ];
+
+    function loadScannerLib() {
+      if (window.Html5Qrcode) return Promise.resolve();
+      return SCANNER_LIBS.reduce((chain, src) => chain.catch(() => new Promise((res, rej) => {
+        const sc = document.createElement('script');
+        sc.src = src; sc.onload = res; sc.onerror = () => { sc.remove(); rej(new Error('yüklenemedi')); };
+        document.head.appendChild(sc);
+      })), Promise.reject()).then(() => { if (!window.Html5Qrcode) throw new Error('yok'); });
+    }
+
+    function setScanStatus(msg, isError) {
+      const el = document.getElementById('imeiScanStatus');
+      el.textContent = msg;
+      el.className = 'text-xs min-h-[1.25rem] ' + (isError ? 'text-rose-300' : 'text-slate-300');
+    }
+
+    async function openImeiScanner(targetId) {
+      imeiScanTarget = targetId; imeiScanLast = '';
+      document.getElementById('imeiScanUse').classList.add('hidden');
+      document.getElementById('imeiScanModal').classList.remove('hidden');
+      setScanStatus('Kamera başlatılıyor…');
+      try {
+        await loadScannerLib();
+      } catch (e) {
+        setScanStatus('Okuyucu yüklenemedi. İnternet bağlantınızı kontrol edin veya IMEI\'yi elle yazın.', true);
+        return;
+      }
+      try {
+        const F = Html5QrcodeSupportedFormats;
+        imeiScanner = new Html5Qrcode('imeiScanReader', {
+          formatsToSupport: [F.CODE_128, F.CODE_39, F.CODE_93, F.ITF, F.EAN_13, F.QR_CODE],
+          useBarCodeDetectorIfSupported: true,
+          verbose: false
+        });
+        await imeiScanner.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: (w, h) => ({ width: Math.floor(w * 0.9), height: Math.floor(Math.min(h, w) * 0.4) }) },
+          onImeiScanned,
+          () => {}
+        );
+        setScanStatus('Barkodu çerçevenin içine alın…');
+      } catch (err) {
+        imeiScanner = null;
+        const denied = /permission|denied|notallowed/i.test(String(err));
+        setScanStatus(denied ? 'Kamera izni verilmedi. Tarayıcı adres çubuğundan kamera iznini açın.' : 'Kamera açılamadı. Kamera yoksa IMEI\'yi elle yazın.', true);
+      }
+    }
+
+    function fillScannedValue(value) {
+      const input = document.getElementById(imeiScanTarget);
+      if (input) {
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      closeImeiScanner();
+      showToast('Okundu: ' + value);
+    }
+
+    function onImeiScanned(text) {
+      const raw = String(text || '').trim();
+      if (!raw || raw === imeiScanLast) return;
+      const imei = (raw.match(/\d{15}/) || [])[0];
+      if (imei) { fillScannedValue(imei); return; }
+      imeiScanLast = raw;
+      setScanStatus(`15 haneli IMEI değil: "${raw}". Başka barkodu deneyin.`, true);
+      document.getElementById('imeiScanUse').classList.remove('hidden');
+    }
+
+    function useScannedAnyway() {
+      if (imeiScanLast) fillScannedValue(imeiScanLast);
+    }
+
+    async function closeImeiScanner() {
+      document.getElementById('imeiScanModal').classList.add('hidden');
+      const sc = imeiScanner; imeiScanner = null;
+      if (sc) { try { await sc.stop(); } catch (e) {} try { sc.clear(); } catch (e) {} }
+    }
+
+    
     // --- SAYFA YÜKLENDİĞİNDE BAŞLAT ---
     window.addEventListener('DOMContentLoaded', () => {
       initBrandSelects();
