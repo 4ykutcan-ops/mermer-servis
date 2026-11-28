@@ -37,6 +37,7 @@
   .steps{list-style:none;margin:20px 0 0;padding:0}
   .steps li{display:flex;gap:12px;align-items:center;padding:7px 0;color:var(--mute);font-size:14px;position:relative}
   .steps li::before{content:"";width:14px;height:14px;border-radius:50%;border:2px solid var(--line);flex:none;background:var(--card)}
+  .steps li small{margin-left:auto;font-size:12px;color:var(--mute);font-weight:400}
   .steps li.done{color:var(--ink)}
   .steps li.done::before{background:var(--em);border-color:var(--em)}
   .steps li.now{font-weight:700;color:var(--ink)}
@@ -74,7 +75,7 @@
 
 <script>
 // Cloudflare Worker adresinizi buraya yazın (sonunda / olmadan):
-const API_URL = 'https://mermer-whatsapp.4ykutcan.workers.dev';
+const API_URL = 'https://mermer-whatsapp.HESABINIZ.workers.dev';
 
 const STATUSES = ['Kabul Edildi','İnceleniyor','Müşteri Onayı Bekliyor','Parça Bekleniyor','Tamirde','Hazır','Teslim Edildi'];
 const $ = (id) => document.getElementById(id);
@@ -100,7 +101,15 @@ function render(o) {
   r.append(top);
 
   const ol = el('ol', 'steps');
-  STATUSES.forEach((s, i) => ol.append(el('li', i < idx ? 'done' : i === idx ? 'done now' : '', s)));
+  const times = {};
+  (o.history || []).forEach(h => { times[h.status] = h.at; });
+  if (!times['Kabul Edildi'] && o.createdAt) times['Kabul Edildi'] = o.createdAt;
+  const fmtShort = (t) => new Date(t).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  STATUSES.forEach((s, i) => {
+    const li = el('li', i < idx ? 'done' : i === idx ? 'done now' : '', s);
+    if (i <= idx && times[s]) li.append(el('small', '', fmtShort(times[s])));
+    ol.append(li);
+  });
   r.append(ol);
 
   if (o.status === 'Müşteri Onayı Bekliyor' && !o.approved) {
