@@ -837,7 +837,7 @@
             <div>
               <h2 class="text-xl font-black tracking-tight uppercase">MERMER İLETİŞİM</h2>
               <p class="text-[11px] text-slate-600 font-medium">Cep Telefonu Satış & Teknik Servis Merkezi</p>
-              <p class="text-[10px] text-slate-500 mt-1">Tel: 0 (332) 555 01 99 • Kulu / Konya</p>
+              <p class="text-[10px] text-slate-500 mt-1">Tel: 0537 697 25 63 • Konya/Kulu</p>
               <div class="mt-2 inline-block bg-slate-900 text-white font-mono font-bold px-2.5 py-1 rounded text-sm" id="rcp-trackingNo">
                 SRV-2026-101
               </div>
@@ -1071,14 +1071,14 @@
   </div>
 
   <!-- ======================================================== -->
-  <!-- MODAL 6: YAZDIRILABİLİR SATIŞ & GARANTİ BELGESİ          -->
+  <!-- MODAL 6: YAZDIRILABİLİR SATIŞ FİŞİ          -->
   <!-- ======================================================== -->
   <div id="saleReceiptModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm overflow-y-auto">
     <div class="min-h-screen px-4 py-6 flex items-center justify-center">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
         <div class="no-print px-5 py-3.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
           <span class="text-sm font-semibold text-white flex items-center gap-2">
-            <i class="fa-solid fa-file-shield text-emerald-400"></i> Cihaz Satış & Garanti Belgesi
+            <i class="fa-solid fa-file-shield text-emerald-400"></i> Cihaz Satış Fişi
           </span>
           <div class="flex items-center gap-2">
             <button onclick="printSaleReceipt()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
@@ -1095,13 +1095,13 @@
             <div>
               <h2 class="text-xl font-black tracking-tight uppercase">MERMER İLETİŞİM</h2>
               <p class="text-[11px] text-slate-600 font-medium">Sıfır & İkinci El Cep Telefonu Satış - Teknik Servis</p>
-              <p class="text-[10px] text-slate-500 mt-1">Tel: 0 (332) 555 01 99 • Kulu / Konya</p>
+              <p class="text-[10px] text-slate-500 mt-1">Tel: 0537 697 25 63 • Konya/Kulu</p>
               <div class="mt-2 inline-block bg-slate-900 text-white font-mono font-bold px-2.5 py-1 rounded text-sm" id="srcp-saleNo">
                 SAT-2026-101
               </div>
             </div>
             <div class="text-right">
-              <span class="inline-block border-2 border-slate-900 px-2.5 py-1 font-black text-xs uppercase tracking-wider">SATIŞ & GARANTİ BELGESİ</span>
+              <span class="inline-block border-2 border-slate-900 px-2.5 py-1 font-black text-xs uppercase tracking-wider">SATIŞ FİŞİ</span>
               <p class="text-[11px] font-semibold mt-2" id="srcp-date">-</p>
             </div>
           </div>
@@ -1153,7 +1153,7 @@
           </div>
 
           <div class="py-3 text-[9.5px] text-slate-600 space-y-1">
-            <p class="font-bold text-slate-800">SATIŞ & GARANTİ KOŞULLARI:</p>
+            <p class="font-bold text-slate-800">SATIŞ KOŞULLARI:</p>
             <p>1. İşbu belge üzerinde IMEI numarası yazılı cihaz, belirtilen durum ve kayıt statüsüyle alıcıya çalışır vaziyette teslim edilmiştir.</p>
             <p>2. Sıvı teması, darbe/kırılma ve yetkisiz müdahale kaynaklı arızalar garanti kapsamı dışındadır.</p>
             <p>3. Yurt dışı cihazlarda yasal kullanım ve kayıt süreleri alıcının bilgisi dahilinde teslim edilmiştir.</p>
@@ -1170,6 +1170,8 @@
               <p class="font-bold text-xs text-slate-900 mt-1" id="srcp-seller"></p>
             </div>
           </div>
+
+          <p class="mt-4 pt-3 border-t border-slate-300 text-center text-[9.5px] font-semibold text-slate-600">Bu belge sadece satış fişidir, bilgilendirme amaçlıdır. Garanti belgesi yerine geçmez.</p>
         </div>
       </div>
     </div>
@@ -2702,7 +2704,7 @@
       window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // --- SATIŞ & GARANTİ BELGESİ YAZDIRMA ---
+    // --- SATIŞ FİŞİ YAZDIRMA ---
     function openSaleReceiptModal(id) {
       const s = deviceSales.find(item => item.id === id);
       if (!s) return;
@@ -2827,7 +2829,7 @@
       const sel = document.getElementById('loginName');
       sel.innerHTML = '<option value="" disabled selected>Seçiniz...</option>' + STAFF.map(n => `<option value="${n}">${n}</option>`).join('');
       const cfg = syncConfig();
-      document.getElementById('loginUrl').value = cfg.url;
+      document.getElementById('loginUrl').value = cfg.url || 'https://mermer-whatsapp.4ykutcan.workers.dev';
       document.getElementById('loginKey').value = cfg.key;
       document.getElementById('loginServer').open = !cfg.url;
       document.getElementById('loginOverlay').style.display = 'flex';
