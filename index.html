@@ -191,6 +191,20 @@
     .seg-opt[data-tone="purple"]>input:checked+div{background:#6D4AA8!important;border-color:#6D4AA8!important}
     .seg-opt>input:focus-visible+div{outline:2px solid var(--em);outline-offset:2px}
 
+    /* giriş ekranı & küçük bileşenler */
+    #loginOverlay{position:fixed;inset:0;z-index:100;background:var(--bg,#F5F6F5);display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+    #loginOverlay .box{background:#fff;border:1px solid #E1E7E4;border-radius:18px;max-width:380px;width:100%;padding:26px;box-shadow:0 12px 40px rgba(16,23,20,.12);color:#101714}
+    #loginOverlay label{display:block;font-size:12px;font-weight:600;margin:14px 0 6px}
+    #loginOverlay input,#loginOverlay select{width:100%;padding:11px 13px;border:1px solid #D5DDD9;border-radius:11px;font-size:14px;background:#fff;color:#101714}
+    #loginOverlay button.go{width:100%;margin-top:18px;padding:12px;border:0;border-radius:11px;background:#0E7C57;color:#fff;font-weight:650;font-size:14px;cursor:pointer}
+    #loginOverlay .err{background:#FEE4E2;color:#B42318;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px}
+    #loginOverlay details{margin-top:14px;font-size:12px;color:#5d6b65}
+    #userPill{position:fixed;left:20px;bottom:64px;z-index:30;background:#fff;color:#101714;border:1px solid #D5DDD9;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:600;box-shadow:0 2px 8px rgba(16,23,20,.12);display:none;align-items:center;gap:8px}
+    #userPill button{border:0;background:none;color:#B42318;font-weight:700;cursor:pointer;font-size:12px;padding:0}
+    .thumb{position:relative;width:64px;height:64px;border-radius:10px;overflow:hidden;border:1px solid #D5DDD9;background:#EEF1EF}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .thumb button{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(16,23,20,.75);color:#fff;font-size:11px;line-height:1;cursor:pointer}
+
     /* tables */
     main table{border-collapse:collapse!important}
     main thead th{background:var(--soft)!important;color:var(--mute)!important;border-bottom:1px solid var(--line)!important;font-size:12px!important;font-weight:550!important;padding:12px 16px!important}
@@ -391,6 +405,7 @@
       </div>
 
       <!-- İş Emirleri Listesi / Kartlar / Kanban Alanı -->
+      <div id="readyReminderBox"></div>
       <div id="ordersContainer"></div>
     </section>
 
@@ -538,6 +553,43 @@
   </div>
 
 
+  <!-- Giriş ekranı -->
+  <div id="loginOverlay">
+    <form class="box" onsubmit="doLogin(event)" autocomplete="off">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="width:38px;height:38px;border-radius:10px;background:#0E7C57;color:#fff;display:grid;place-items:center"><i class="fa-solid fa-mobile-screen-button"></i></div>
+        <div><b style="font-size:16px">Mermer İletişim</b><div style="font-size:12px;color:#5d6b65">Çalışan girişi</div></div>
+      </div>
+      <label for="loginName">Kimsiniz?</label>
+      <select id="loginName" required></select>
+      <label for="loginPin">PIN</label>
+      <input id="loginPin" type="password" inputmode="numeric" maxlength="12" placeholder="PIN (tanımlıysa)" />
+      <details id="loginServer">
+        <summary style="cursor:pointer">Sunucu ayarları</summary>
+        <label for="loginUrl">Sunucu adresi</label>
+        <input id="loginUrl" type="url" placeholder="https://mermer-whatsapp.hesabiniz.workers.dev" />
+        <label for="loginKey">Erişim anahtarı (API_KEY)</label>
+        <input id="loginKey" type="password" />
+      </details>
+      <div id="loginErr" class="err" style="display:none"></div>
+      <button class="go" type="submit" id="loginBtn">Giriş</button>
+    </form>
+  </div>
+  <div id="userPill" class="no-print"><i class="fa-solid fa-user"></i><span id="userPillName"></span><button type="button" onclick="logout()">Çıkış</button></div>
+
+  <!-- Fotoğraf görüntüleyici -->
+  <div id="photoModal" class="fixed inset-0 z-[60] hidden bg-slate-950/90 overflow-y-auto" onclick="if(event.target===this)closePhotoViewer()">
+    <div class="min-h-screen px-4 py-6 flex items-center justify-center">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-images text-blue-400"></i> <span id="photoTitle">Kabul fotoğrafları</span></h3>
+          <button type="button" onclick="closePhotoViewer()" class="text-slate-400 hover:text-white p-1.5" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="photoGrid" class="grid grid-cols-2 gap-3"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Barkod / IMEI okuyucu (kamera) -->
   <div id="imeiScanModal" class="fixed inset-0 z-[70] hidden bg-slate-950/90 backdrop-blur-sm overflow-y-auto">
     <div class="min-h-screen px-4 py-6 flex items-center justify-center">
@@ -564,7 +616,7 @@
     <div class="min-h-screen px-4 py-6 flex items-center justify-center">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full shadow-2xl p-6 space-y-4">
         <div class="flex items-center justify-between">
-          <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-cloud text-emerald-400"></i> Ortak Veritabanı</h3>
+          <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-cloud text-emerald-400"></i> Ortak Veritabanı &amp; Yedek</h3>
           <button onclick="closeSyncSettings()" class="text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <p class="text-xs text-slate-400">Birden fazla bilgisayarda aynı kayıtları görmek için Cloudflare Worker adresinizi ve erişim anahtarınızı (API_KEY) girin. Her iki bilgisayarda da aynı bilgileri yazın.</p>
@@ -575,6 +627,15 @@
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1.5">Erişim Anahtarı (API_KEY)</label>
           <input id="syncKey" type="password" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Yedekleme</label>
+          <div class="flex gap-2">
+            <button type="button" onclick="downloadBackup()" class="flex-1 px-3 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm"><i class="fa-solid fa-download mr-1.5"></i>Yedek İndir</button>
+            <button type="button" onclick="document.getElementById('backupFile').click()" class="flex-1 px-3 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm"><i class="fa-solid fa-upload mr-1.5"></i>Yedekten Yükle</button>
+          </div>
+          <input type="file" id="backupFile" accept=".json,application/json" class="hidden" onchange="restoreBackup(this)" />
+          <p class="text-[11px] text-slate-500 mt-1.5">Yedek dosyası (JSON) servis, satış ve stok kayıtlarını içerir. Fotoğraflar sunucuda durur, yedeğe dahil değildir.</p>
         </div>
         <div class="flex gap-2 justify-end pt-2">
           <button onclick="testSync()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm">Bağlantıyı Test Et</button>
@@ -597,7 +658,7 @@
               <i class="fa-solid fa-file-circle-plus"></i>
             </div>
             <div>
-              <h3 class="font-bold text-lg text-white">Yeni Cihaz Kabul & İş Emri</h3>
+              <h3 id="orderModalTitle" class="font-bold text-lg text-white">Yeni Cihaz Kabul & İş Emri</h3>
               <p class="text-xs text-slate-400">Otomatik Takip No: <span id="modalTrackingPreview" class="font-mono text-blue-400 font-bold">SRV-102</span></p>
             </div>
           </div>
@@ -608,6 +669,7 @@
 
         <!-- Form -->
         <form id="newOrderForm" onsubmit="handleCreateOrder(event)" class="p-6 space-y-5 max-h-[82vh] overflow-y-auto">
+          <input type="hidden" id="editOrderId" value="" />
           
           <!-- Aynı IMEI Geçmiş Uyarısı -->
           <div id="imeiHistoryAlert" class="hidden bg-amber-500/10 border border-amber-500/40 rounded-xl p-4 text-sm text-amber-200">
@@ -720,12 +782,25 @@
             </div>
           </div>
 
+          <!-- Kabul fotoğrafları -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Kabul Fotoğrafları (isteğe bağlı, en fazla 4)</label>
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="px-3.5 py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-100 text-sm cursor-pointer">
+                <i class="fa-solid fa-camera mr-1.5"></i>Fotoğraf Ekle
+                <input type="file" id="photoInput" accept="image/*" multiple class="hidden" onchange="onPhotosPicked(this)" />
+              </label>
+              <span id="photoHint" class="text-[11px] text-slate-500">Çizik, kırık gibi kabul durumunu belgeler.</span>
+            </div>
+            <div id="photoThumbs" class="flex flex-wrap gap-2 mt-2"></div>
+          </div>
+
           <!-- Alt Bilgi & Kaydet -->
           <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-end gap-3">
             <div class="flex items-center gap-2 w-full sm:w-auto">
               <button type="button" onclick="closeNewOrderModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium transition-colors">İptal</button>
               <button type="submit" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 transition-all">
-                <i class="fa-solid fa-check mr-1.5"></i>Kaydı Oluştur
+                <i class="fa-solid fa-check mr-1.5"></i><span id="orderSubmitText">Kaydı Oluştur</span>
               </button>
             </div>
           </div>
@@ -768,24 +843,10 @@
               </div>
             </div>
 
-            <!-- Görsel QR Kod Simülasyonu -->
+            <!-- Takip sayfası QR kodu -->
             <div class="text-center">
-              <div class="w-20 h-20 border-2 border-slate-900 p-1 rounded flex items-center justify-center bg-white">
-                <svg viewBox="0 0 100 100" class="w-full h-full fill-slate-900">
-                  <rect x="5" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/>
-                  <rect x="12" y="12" width="11" height="11"/>
-                  <rect x="70" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/>
-                  <rect x="77" y="12" width="11" height="11"/>
-                  <rect x="5" y="70" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/>
-                  <rect x="12" y="77" width="11" height="11"/>
-                  <rect x="40" y="10" width="8" height="8"/><rect x="52" y="18" width="8" height="14"/>
-                  <rect x="10" y="42" width="14" height="8"/><rect x="35" y="38" width="12" height="12"/>
-                  <rect x="55" y="45" width="10" height="10"/><rect x="75" y="40" width="15" height="8"/>
-                  <rect x="42" y="65" width="8" height="15"/><rect x="60" y="70" width="12" height="12"/>
-                  <rect x="78" y="68" width="14" height="22"/><rect x="45" y="85" width="10" height="8"/>
-                </svg>
-              </div>
-              <span class="text-[9px] font-semibold text-slate-600 block mt-1">Durum Sorgu QR</span>
+              <div id="rcp-qr" class="w-20 h-20 border-2 border-slate-900 p-1 rounded flex items-center justify-center bg-white text-[9px] text-slate-500"></div>
+              <span class="text-[9px] font-semibold text-slate-600 block mt-1">Durum için QR okutun</span>
             </div>
           </div>
 
@@ -874,7 +935,7 @@
               <i class="fa-solid fa-handshake"></i>
             </div>
             <div>
-              <h3 class="font-bold text-lg text-white">Cihaz Satışı Kaydet</h3>
+              <h3 id="saleModalTitle" class="font-bold text-lg text-white">Cihaz Satışı Kaydet</h3>
               <p class="text-xs text-slate-400">Satış Belge No: <span id="saleNoPreview" class="font-mono text-emerald-400 font-bold">SAT-2026-104</span></p>
             </div>
           </div>
@@ -883,6 +944,7 @@
 
         <form id="newSaleForm" onsubmit="handleCreateSale(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
           <input type="hidden" id="saleStockId" value="" />
+          <input type="hidden" id="saleEditId" value="" />
 
           <!-- Stoktan Hızlı Seçim (Opsiyonel) -->
           <div id="stockQuickPickBox" class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
@@ -958,8 +1020,8 @@
             </div>
           </div>
 
-          <!-- Garanti Süresi, Satış Fiyatı & Ödeme -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Garanti Süresi, Satış Fiyatı, Ödeme & Satan -->
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Garanti Süresi *</label>
               <select id="saleWarranty" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
@@ -984,6 +1046,10 @@
                 <option value="Veresiye / Taksit">Veresiye / Taksit</option>
               </select>
             </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Satışı Yapan *</label>
+              <select id="saleSoldBy" required class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2.5 text-sm text-white outline-none"></select>
+            </div>
           </div>
 
           <div>
@@ -995,7 +1061,7 @@
             <div class="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
               <button type="button" onclick="closeNewSaleModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-sm">İptal</button>
               <button type="submit" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/20">
-                <i class="fa-solid fa-check mr-1.5"></i>Satışı Tamamla
+                <i class="fa-solid fa-check mr-1.5"></i><span id="saleSubmitText">Satışı Tamamla</span>
               </button>
             </div>
           </div>
@@ -1101,6 +1167,7 @@
             <div>
               <p class="font-bold text-[10px] uppercase text-slate-700">Teslim Eden (Mermer İletişim)</p>
               <div class="h-12 border-b border-slate-400 mt-2"></div>
+              <p class="font-bold text-xs text-slate-900 mt-1" id="srcp-seller"></p>
             </div>
           </div>
         </div>
@@ -1115,6 +1182,13 @@
     // --- SABİTLER & DURUM LİSTESİ ---
     // Müşteri takip sayfasının linki. Kısa link (örn. tinyurl.com/mermer-takip) oluşturduysanız buraya yazın.
     const TRACK_LINK = 'https://tinyurl.com/servis-takip';
+
+    // Çalışanlar (giriş, "teslim alan" ve "satışı yapan" listelerinde kullanılır)
+    const STAFF = ['Rıdvan Mermer', 'Aykut Kaplan'];
+    // QR koddaki takip sayfası adresi (kısa link değil, tam adres yazın)
+    const TRACK_PAGE = 'https://4ykutcan-ops.github.io/mermer-servis/takip.html';
+    let currentUser = '';
+    try { currentUser = sessionStorage.getItem('mermer_user') || ''; } catch (e) {}
 
     const STATUSES = [
       'Kabul Edildi',
@@ -1225,6 +1299,45 @@
       }));
       rebuildSnapshot();
       persistLocal();
+    }
+
+    // --- YEDEKLEME ---
+    function downloadBackup() {
+      const data = { app: 'mermer-servis', version: 1, exportedAt: new Date().toISOString(), orders, sales: deviceSales, stock: deviceStock, deleted };
+      const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `mermer-yedek-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      showToast('Yedek dosyası indirildi.');
+    }
+
+    function restoreBackup(input) {
+      const file = input.files && input.files[0];
+      input.value = '';
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const d = JSON.parse(reader.result);
+          if (d.app !== 'mermer-servis' || !Array.isArray(d.orders) || !Array.isArray(d.sales) || !Array.isArray(d.stock)) throw new Error('format');
+          const msg = `Yedekte ${d.orders.length} servis, ${d.sales.length} satış, ${d.stock.length} stok kaydı var.\nMevcut kayıtlarla birleştirilecek (hiçbir kayıt silinmez). Devam edilsin mi?`;
+          if (!confirm(msg)) return;
+          const now = Date.now();
+          const revive = (r) => { if (deleted[r.id] !== undefined) { r.updatedAt = now; delete deleted[r.id]; } return r; };
+          orders = mergeList(orders, d.orders.filter(r => r && r.id !== undefined).map(revive), deleted);
+          deviceSales = mergeList(deviceSales, d.sales.filter(r => r && r.id !== undefined).map(revive), deleted);
+          deviceStock = mergeList(deviceStock, d.stock.filter(r => r && r.id !== undefined).map(revive), deleted);
+          saveAll();
+          renderOrders(); renderSalesModule();
+          closeSyncSettings();
+          showToast('Yedek yüklendi ve birleştirildi.');
+        } catch (err) {
+          showToast('Geçersiz yedek dosyası.', 'warning');
+        }
+      };
+      reader.readAsText(file);
     }
 
     // --- SUNUCU SENKRONU ---
@@ -1483,8 +1596,47 @@
       }).sort((a, b) => b.createdAt - a.createdAt);
     }
 
+    const READY_DAYS = 3;
+    function readyAt(order) {
+      const h = (order.history || []).filter(x => x.status === 'Hazır');
+      return h.length ? h[h.length - 1].at : (order.updatedAt || order.createdAt);
+    }
+
+    function renderReadyReminders() {
+      const box = document.getElementById('readyReminderBox');
+      if (!box) return;
+      const limit = READY_DAYS * 24 * 3600 * 1000;
+      const list = orders.filter(o => o.status === 'Hazır' && (Date.now() - readyAt(o)) >= limit)
+        .sort((a, b) => readyAt(a) - readyAt(b));
+      if (!list.length) { box.innerHTML = ''; return; }
+      const days = (t) => Math.floor((Date.now() - t) / 86400000);
+      box.innerHTML = `
+        <div class="mb-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
+          <p class="text-sm font-bold text-amber-300 mb-2"><i class="fa-solid fa-bell mr-1.5"></i>${list.length} cihaz ${READY_DAYS} günden uzun süredir hazır, teslim alınmadı</p>
+          <ul class="space-y-1.5">
+            ${list.map(o => `
+              <li class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-200">
+                <span><span class="font-mono font-bold text-blue-400">${o.trackingNo}</span> • ${o.customerName} • ${o.deviceModel} • <strong>${days(readyAt(o))} gündür hazır</strong>${o.remindedAt ? ` <span class="text-slate-400">(son hatırlatma: ${days(o.remindedAt)} gün önce)</span>` : ''}</span>
+                <button onclick="sendReadyReminder('${o.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 font-medium"><i class="fa-brands fa-whatsapp mr-1"></i>${o.remindedAt ? 'Tekrar hatırlat' : 'Hatırlat'}</button>
+              </li>`).join('')}
+          </ul>
+        </div>`;
+    }
+
+    function sendReadyReminder(id) {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      const total = (order.customerPrice === null || order.customerPrice === undefined) ? '' : `Toplam Tutar: ${formatCurrency(order.customerPrice).replace(' ₺', '₺')}\n`;
+      const msg = `Sayın ${order.customerName},\n${order.trackingNo} Numaralı ${order.deviceModel} cihazınız hazırdır.\n${total}Teslim almak için bizi arayabilir veya mağazamıza uğrayabilirsiniz.\n-Mermer İletişim`;
+      window.open(`https://wa.me/${normalizePhoneTR(order.customerPhone)}?text=${encodeURIComponent(msg)}`, '_blank');
+      order.remindedAt = Date.now();
+      saveOrders();
+      renderOrders();
+    }
+
     function renderOrders() {
       updateDashboardStats();
+      renderReadyReminders();
       const filtered = getFilteredOrders();
       const container = document.getElementById('ordersContainer');
 
@@ -1591,6 +1743,8 @@
               <strong class="text-slate-400">Arıza:</strong> ${order.issueDesc}
             </p>
 
+            ${historyHTML(order)}
+
             <!-- Ek Bilgiler: Şifre, Garanti, Aksesuarlar -->
             <div class="flex flex-wrap items-center gap-2 mt-3 text-[11px] text-slate-400">
               ${order.imei ? `<span class="bg-slate-800/70 px-2 py-0.5 rounded font-mono">IMEI: ${order.imei}</span>` : ''}
@@ -1623,6 +1777,10 @@
                 <i class="fa-solid fa-print"></i>
                 <span>Fiş</span>
               </button>
+              ${(order.photos && order.photos.length) ? `<button onclick="openPhotoViewer('${order.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium flex items-center gap-1.5" title="Kabul fotoğrafları"><i class="fa-solid fa-camera"></i>${order.photos.length}</button>` : ''}
+              <button onclick="openEditOrder('${order.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium flex items-center gap-1.5" title="Kaydı düzenle">
+                <i class="fa-solid fa-pen-to-square"></i><span class="hidden sm:inline">Düzenle</span>
+              </button>
               <button onclick="deleteOrder('${order.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" title="Kaydı Sil">
                 <i class="fa-solid fa-trash-can text-xs"></i>
               </button>
@@ -1649,6 +1807,7 @@
             <div class="flex items-center gap-1">
               <button onclick="sendWhatsAppMessage('${order.id}')" class="p-1.5 rounded bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25" title="WhatsApp"><i class="fa-brands fa-whatsapp text-xs"></i></button>
               <button onclick="openReceiptModal('${order.id}')" class="p-1.5 rounded bg-blue-500/15 text-blue-400 hover:bg-blue-500/25" title="Fiş"><i class="fa-solid fa-print text-xs"></i></button>
+              <button onclick="openEditOrder('${order.id}')" class="p-1.5 rounded bg-slate-500/15 text-slate-300 hover:bg-slate-500/25" title="Düzenle"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
             </div>
           </div>
           <select onchange="changeOrderStatus('${order.id}', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-[11px] text-slate-300 outline-none">
@@ -1659,9 +1818,25 @@
     }
 
     // --- İŞ EMRİ İŞLEMLERİ ---
+    function historyOf(order) {
+      return (order.history && order.history.length) ? order.history : [{ status: 'Kabul Edildi', at: order.createdAt, by: order.receivedBy || '' }];
+    }
+
+    function pushHistory(order, status) {
+      if (!order.history || !order.history.length) order.history = [{ status: 'Kabul Edildi', at: order.createdAt, by: order.receivedBy || '' }];
+      order.history.push({ status, at: Date.now(), by: currentUser || '' });
+    }
+
+    function historyHTML(order) {
+      const h = historyOf(order);
+      const rows = h.slice().reverse().map(x => `<li><span class="text-slate-300">${x.status}</span> • ${new Date(x.at).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}${x.by ? ' • ' + x.by : ''}</li>`).join('');
+      return `<details class="mt-3 text-[11px] text-slate-400"><summary class="cursor-pointer select-none">Durum geçmişi (${h.length})</summary><ul class="mt-1.5 space-y-0.5 pl-1">${rows}</ul></details>`;
+    }
+
     function changeOrderStatus(id, newStatus) {
       const order = orders.find(o => o.id === id);
       if (!order) return;
+      if (order.status !== newStatus) pushHistory(order, newStatus);
       order.status = newStatus;
       saveOrders();
       renderOrders();
@@ -1700,6 +1875,7 @@
       order.approved = !order.approved;
       if (order.approved && order.status === 'Müşteri Onayı Bekliyor') {
         order.status = 'Tamirde';
+        pushHistory(order, 'Tamirde');
       }
       saveOrders();
       renderOrders();
@@ -1718,6 +1894,7 @@
       const idx = orders.findIndex(o => o.id === id);
       if (idx === -1) return;
       const removed = orders.splice(idx, 1)[0];
+      (removed.photos || []).forEach(deletePhotoRemote);
       saveOrders();
       renderOrders();
       showToast(`${removed.trackingNo} kaydı silindi.`, 'warning');
@@ -1761,12 +1938,53 @@
     }
 
     // --- YENİ CİHAZ KABUL MODALI ---
+    let photoState = { kept: [], added: [], removed: [] };
+    const photoCache = new Map(); // id -> dataURL
+
     function openNewOrderModal() {
       document.getElementById('newOrderForm').reset();
+      document.getElementById('editOrderId').value = '';
+      document.getElementById('orderModalTitle').textContent = 'Yeni Cihaz Kabul & İş Emri';
+      document.getElementById('orderSubmitText').textContent = 'Kaydı Oluştur';
       document.getElementById('customerPrice').disabled = false;
+      document.getElementById('priceUnspecified').disabled = false;
       document.getElementById('modalTrackingPreview').textContent = generateNextTrackingNo();
       document.getElementById('imeiHistoryAlert').classList.add('hidden');
+      if (currentUser && STAFF.includes(currentUser)) document.getElementById('receivedBy').value = currentUser;
+      photoState = { kept: [], added: [], removed: [] };
+      renderPhotoThumbs();
       document.getElementById('newOrderModal').classList.remove('hidden');
+    }
+
+    function openEditOrder(id) {
+      const o = orders.find(x => x.id === id);
+      if (!o) return;
+      openNewOrderModal();
+      document.getElementById('editOrderId').value = id;
+      document.getElementById('orderModalTitle').textContent = 'Servis Kaydını Düzenle';
+      document.getElementById('orderSubmitText').textContent = 'Değişiklikleri Kaydet';
+      document.getElementById('modalTrackingPreview').textContent = o.trackingNo;
+      document.getElementById('custName').value = o.customerName;
+      document.getElementById('custPhone').value = o.customerPhone;
+      const bm = (o.brand && BRANDS.includes(o.brand) && o.brand !== 'Diğer' && o.deviceModel.toLowerCase().startsWith(o.brand.toLowerCase() + ' '))
+        ? { brand: o.brand, model: o.deviceModel.slice(o.brand.length).trim() }
+        : (o.brand === 'Diğer' ? { brand: 'Diğer', model: o.deviceModel } : splitBrandModel(o.deviceModel));
+      document.getElementById('deviceBrand').value = bm.brand;
+      document.getElementById('deviceModel').value = bm.model;
+      document.getElementById('deviceImei').value = o.imei || '';
+      document.getElementById('devicePasscode').value = o.passcode === 'Belirtilmedi' ? '' : (o.passcode || '');
+      document.getElementById('cosmeticCondition').value = o.cosmeticCondition === 'Standart kullanım izleri' ? '' : (o.cosmeticCondition || '');
+      document.querySelectorAll('input[name="accessories"]').forEach(cb => { cb.checked = (o.accessories || []).includes(cb.value); });
+      document.getElementById('issueDesc').value = o.issueDesc;
+      if (o.receivedBy) document.getElementById('receivedBy').value = o.receivedBy;
+      const unspecified = o.customerPrice === null || o.customerPrice === undefined;
+      document.getElementById('priceUnspecified').checked = unspecified;
+      document.getElementById('customerPrice').value = unspecified ? '' : o.customerPrice;
+      document.getElementById('customerPrice').disabled = unspecified || o.approved;
+      document.getElementById('priceUnspecified').disabled = !!o.approved;
+      document.getElementById('warrantyPeriod').value = o.warranty;
+      photoState = { kept: (o.photos || []).slice(), added: [], removed: [] };
+      renderPhotoThumbs();
     }
 
     function closeNewOrderModal() {
@@ -1824,13 +2042,9 @@
 
     async function handleCreateOrder(e) {
       e.preventDefault();
-      await syncNow();
-      const trackingNo = generateNextTrackingNo();
+      const editId = document.getElementById('editOrderId').value;
       const accessories = Array.from(document.querySelectorAll('input[name="accessories"]:checked')).map(cb => cb.value);
-
-      const newOrder = {
-        id: Date.now().toString(),
-        trackingNo,
+      const fields = {
         customerName: document.getElementById('custName').value.trim(),
         customerPhone: document.getElementById('custPhone').value.trim(),
         brand: document.getElementById('deviceBrand').value,
@@ -1840,21 +2054,182 @@
         cosmeticCondition: document.getElementById('cosmeticCondition').value.trim() || 'Standart kullanım izleri',
         accessories,
         issueDesc: document.getElementById('issueDesc').value.trim(),
-        partCost: 0,
-        customerPrice: document.getElementById('priceUnspecified').checked ? null : Number(document.getElementById('customerPrice').value || 0),
         warranty: document.getElementById('warrantyPeriod').value,
-        receivedBy: document.getElementById('receivedBy').value,
+        receivedBy: document.getElementById('receivedBy').value
+      };
+      const priceValue = document.getElementById('priceUnspecified').checked ? null : Number(document.getElementById('customerPrice').value || 0);
+
+      if (editId) {
+        const o = orders.find(x => x.id === editId);
+        if (!o) { closeNewOrderModal(); return; }
+        Object.assign(o, fields);
+        if (!o.approved) o.customerPrice = priceValue;
+        o.photos = await commitPhotos();
+        saveOrders();
+        renderOrders();
+        closeNewOrderModal();
+        showToast(`${o.trackingNo} kaydı güncellendi.`);
+        return;
+      }
+
+      await syncNow();
+      const trackingNo = generateNextTrackingNo();
+      const now = Date.now();
+      const newOrder = Object.assign({
+        id: now.toString(),
+        trackingNo,
+        partCost: 0,
+        customerPrice: priceValue,
         status: 'Kabul Edildi',
         approved: false,
         paymentMethod: 'Belirlenmedi',
-        createdAt: Date.now()
-      };
+        createdAt: now,
+        createdBy: currentUser || '',
+        history: [{ status: 'Kabul Edildi', at: now, by: currentUser || fields.receivedBy || '' }]
+      }, fields);
+      newOrder.photos = await commitPhotos();
 
       orders.unshift(newOrder);
       saveOrders();
       renderOrders();
       closeNewOrderModal();
       showToast(`${trackingNo} numaralı iş emri oluşturuldu!`);
+    }
+
+    // --- KABUL FOTOĞRAFLARI (sunucuda ayrı tutulur, kayıtta sadece kimlikleri durur) ---
+    function compressImage(file, maxSide = 1000, quality = 0.65) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const u = URL.createObjectURL(file);
+        img.onload = () => {
+          const sc = Math.min(1, maxSide / Math.max(img.width, img.height));
+          const c = document.createElement('canvas');
+          c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(u);
+          resolve(c.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => { URL.revokeObjectURL(u); reject(new Error('Görsel okunamadı')); };
+        img.src = u;
+      });
+    }
+
+    function apiCfg() { const c = syncConfig(); return c.url ? c : null; }
+
+    async function onPhotosPicked(input) {
+      const files = Array.from(input.files || []);
+      input.value = '';
+      if (!apiCfg()) { showToast('Fotoğraf için önce sol alttaki Senkron ayarlarını yapın.', 'warning'); return; }
+      for (const f of files) {
+        if (photoState.kept.length + photoState.added.length >= 4) { showToast('En fazla 4 fotoğraf eklenebilir.', 'warning'); break; }
+        try {
+          const data = await compressImage(f);
+          photoState.added.push({ id: 'ph_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), data });
+        } catch (err) { showToast('Fotoğraf okunamadı.', 'warning'); }
+      }
+      renderPhotoThumbs();
+    }
+
+    function removePhoto(kind, id) {
+      if (kind === 'added') photoState.added = photoState.added.filter(p => p.id !== id);
+      else { photoState.kept = photoState.kept.filter(x => x !== id); photoState.removed.push(id); }
+      renderPhotoThumbs();
+    }
+
+    async function getPhoto(id) {
+      if (photoCache.has(id)) return photoCache.get(id);
+      const cfg = apiCfg();
+      if (!cfg) return '';
+      const r = await fetch(`${cfg.url}/api/photo?id=${encodeURIComponent(id)}`, { headers: { 'x-api-key': cfg.key } });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.ok) return '';
+      photoCache.set(id, d.data);
+      return d.data;
+    }
+
+    async function renderPhotoThumbs() {
+      const box = document.getElementById('photoThumbs');
+      if (!box) return;
+      box.innerHTML = '';
+      const mk = (src, kind, id) => {
+        const d = document.createElement('div'); d.className = 'thumb';
+        const im = document.createElement('img'); im.alt = 'Kabul fotoğrafı'; if (src) im.src = src; d.appendChild(im);
+        const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Fotoğrafı kaldır');
+        x.onclick = () => removePhoto(kind, id); d.appendChild(x);
+        box.appendChild(d); return im;
+      };
+      photoState.kept.forEach(id => { const im = mk(photoCache.get(id), 'kept', id); if (!photoCache.has(id)) getPhoto(id).then(src => { if (src) im.src = src; }); });
+      photoState.added.forEach(p => mk(p.data, 'added', p.id));
+    }
+
+    async function commitPhotos() {
+      const cfg = apiCfg();
+      const ids = photoState.kept.slice();
+      for (const p of photoState.added) {
+        if (!cfg) break;
+        try {
+          const r = await fetch(cfg.url + '/api/photo', { method: 'POST', headers: { 'x-api-key': cfg.key, 'content-type': 'application/json' }, body: JSON.stringify({ id: p.id, data: p.data }) });
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok || !d.ok) throw new Error(d.error || 'yüklenemedi');
+          photoCache.set(p.id, p.data); ids.push(p.id);
+        } catch (err) { showToast('Bir fotoğraf yüklenemedi: ' + err.message, 'warning'); }
+      }
+      photoState.removed.forEach(deletePhotoRemote);
+      return ids;
+    }
+
+    function deletePhotoRemote(id) {
+      const cfg = apiCfg();
+      photoCache.delete(id);
+      if (!cfg) return;
+      fetch(cfg.url + '/api/photo', { method: 'POST', headers: { 'x-api-key': cfg.key, 'content-type': 'application/json' }, body: JSON.stringify({ id, delete: true }) }).catch(() => {});
+    }
+
+    async function openPhotoViewer(orderId) {
+      const o = orders.find(x => x.id === orderId);
+      if (!o) return;
+      document.getElementById('photoTitle').textContent = `${o.trackingNo} • Kabul fotoğrafları`;
+      const grid = document.getElementById('photoGrid');
+      grid.innerHTML = '<p class="text-xs text-slate-400 col-span-2">Yükleniyor…</p>';
+      document.getElementById('photoModal').classList.remove('hidden');
+      const srcs = await Promise.all((o.photos || []).map(getPhoto));
+      grid.innerHTML = '';
+      srcs.forEach(src => {
+        if (!src) return;
+        const im = document.createElement('img'); im.src = src; im.alt = 'Kabul fotoğrafı'; im.className = 'w-full rounded-xl border border-slate-800';
+        grid.appendChild(im);
+      });
+      if (!grid.children.length) grid.innerHTML = '<p class="text-xs text-slate-400 col-span-2">Fotoğraflar yüklenemedi. Senkron bağlantısını kontrol edin.</p>';
+    }
+    function closePhotoViewer() { document.getElementById('photoModal').classList.add('hidden'); }
+
+    // --- QR KOD (fiş) ---
+    function loadQrLib() {
+      if (window.qrcode) return Promise.resolve();
+      return new Promise((res, rej) => {
+        const sc = document.createElement('script');
+        sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
+        sc.onload = res; sc.onerror = () => rej(new Error('qr'));
+        document.head.appendChild(sc);
+      });
+    }
+
+    async function renderReceiptQR(order) {
+      const box = document.getElementById('rcp-qr');
+      if (!box) return;
+      box.textContent = '';
+      try {
+        await loadQrLib();
+        const no = (String(order.trackingNo).match(/(\d+)\s*$/) || [])[1] || order.trackingNo;
+        const q = qrcode(0, 'M');
+        q.addData(`${TRACK_PAGE}?no=${no}`);
+        q.make();
+        box.innerHTML = q.createSvgTag({ cellSize: 3, margin: 0, scalable: true });
+        const svg = box.querySelector('svg');
+        if (svg) { svg.setAttribute('width', '100%'); svg.setAttribute('height', '100%'); }
+      } catch (e) {
+        box.textContent = 'QR yüklenemedi';
+      }
     }
 
     // --- FİŞ YAZDIRMA MODALI ---
@@ -1872,6 +2247,7 @@
       document.getElementById('rcp-warranty').textContent = order.warranty;
       document.getElementById('rcp-price').textContent = formatCurrency(order.customerPrice);
       document.getElementById('rcp-receiver').textContent = order.receivedBy || '-';
+      renderReceiptQR(order);
     }
 
     function openReceiptModal(id) {
@@ -2023,7 +2399,8 @@
               <button onclick="openSaleReceiptModal('${s.id}')" class="px-2.5 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-medium flex items-center gap-1.5">
                 <i class="fa-solid fa-print"></i> Satış Belgesi
               </button>
-              <button onclick="deleteDeviceSale('${s.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10" title="Satışı Sil">
+              <button onclick="openEditSale('${s.id}')" class="text-slate-500 hover:text-blue-400 text-xs" title="Düzenle" aria-label="Satışı düzenle"><i class="fa-solid fa-pen-to-square"></i> Düzenle</button>
+            <button onclick="deleteDeviceSale('${s.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10" title="Satışı Sil">
                 <i class="fa-solid fa-trash-can text-xs"></i>
               </button>
             </div>
@@ -2141,8 +2518,20 @@
     }
 
     // --- CİHAZ SATIŞI KAYDETME MODALI ---
+    function fillSellerSelect(selected) {
+      const sel = document.getElementById('saleSoldBy');
+      const names = STAFF.slice();
+      if (selected && !names.includes(selected)) names.push(selected);
+      sel.innerHTML = '<option value="" disabled>Seçiniz...</option>' + names.map(n => `<option value="${n}">${n}</option>`).join('');
+      sel.value = selected && names.includes(selected) ? selected : (STAFF.includes(currentUser) ? currentUser : '');
+    }
+
     function openNewSaleModal(preselectedStockId = '') {
       document.getElementById('newSaleForm').reset();
+      document.getElementById('saleEditId').value = '';
+      document.getElementById('saleModalTitle').textContent = 'Cihaz Satışı Kaydet';
+      document.getElementById('saleSubmitText').textContent = 'Satışı Tamamla';
+      fillSellerSelect('');
       document.getElementById('saleNoPreview').textContent = generateNextSaleNo();
       document.getElementById('saleStockId').value = '';
 
@@ -2158,7 +2547,35 @@
       document.getElementById('newSaleModal').classList.remove('hidden');
     }
 
+    function openEditSale(id) {
+      const sl = deviceSales.find(x => x.id === id);
+      if (!sl) return;
+      openNewSaleModal();
+      document.getElementById('saleEditId').value = id;
+      document.getElementById('saleModalTitle').textContent = 'Satış Kaydını Düzenle';
+      document.getElementById('saleSubmitText').textContent = 'Değişiklikleri Kaydet';
+      document.getElementById('saleNoPreview').textContent = sl.saleNo;
+      document.getElementById('saleStockSelector').value = '';
+      document.getElementById('saleStockSelector').disabled = true;
+      document.getElementById('saleCustName').value = sl.customerName;
+      document.getElementById('saleCustPhone').value = sl.customerPhone || '';
+      const bm = (sl.brand && sl.brand !== 'Diğer' && sl.deviceModel.toLowerCase().startsWith(sl.brand.toLowerCase() + ' '))
+        ? { brand: sl.brand, model: sl.deviceModel.slice(sl.brand.length).trim() }
+        : (sl.brand === 'Diğer' ? { brand: 'Diğer', model: sl.deviceModel } : splitBrandModel(sl.deviceModel));
+      document.getElementById('saleBrand').value = bm.brand;
+      document.getElementById('saleDeviceModel').value = bm.model;
+      document.getElementById('saleImei').value = sl.imei || '';
+      document.getElementById('salePrice').value = sl.salePrice;
+      document.getElementById('saleWarranty').value = sl.warranty;
+      document.getElementById('salePayment').value = sl.paymentMethod;
+      document.getElementById('saleNotes').value = sl.notes || '';
+      document.querySelectorAll('input[name="saleCondition"]').forEach(r => { r.checked = (r.value === sl.condition); });
+      document.querySelectorAll('input[name="saleOrigin"]').forEach(r => { r.checked = (r.value === sl.origin); });
+      fillSellerSelect(sl.soldBy || '');
+    }
+
     function closeNewSaleModal() {
+      document.getElementById('saleStockSelector').disabled = false;
       document.getElementById('newSaleModal').classList.add('hidden');
     }
 
@@ -2191,6 +2608,30 @@
 
     async function handleCreateSale(e) {
       e.preventDefault();
+      const editId = document.getElementById('saleEditId').value;
+      if (editId) {
+        const sl = deviceSales.find(x => x.id === editId);
+        if (!sl) { closeNewSaleModal(); return; }
+        Object.assign(sl, {
+          customerName: document.getElementById('saleCustName').value.trim(),
+          customerPhone: document.getElementById('saleCustPhone').value.trim(),
+          brand: document.getElementById('saleBrand').value,
+          deviceModel: composeModel('saleBrand', 'saleDeviceModel'),
+          imei: document.getElementById('saleImei').value.trim(),
+          condition: document.querySelector('input[name="saleCondition"]:checked')?.value || sl.condition,
+          origin: document.querySelector('input[name="saleOrigin"]:checked')?.value || sl.origin,
+          warranty: document.getElementById('saleWarranty').value,
+          salePrice: Number(document.getElementById('salePrice').value || 0),
+          paymentMethod: document.getElementById('salePayment').value,
+          notes: document.getElementById('saleNotes').value.trim(),
+          soldBy: document.getElementById('saleSoldBy').value
+        });
+        saveDeviceSales();
+        renderSalesModule();
+        closeNewSaleModal();
+        showToast(`${sl.saleNo} satış kaydı güncellendi.`);
+        return;
+      }
       await syncNow();
       const saleNo = generateNextSaleNo();
       const stockId = document.getElementById('saleStockId').value;
@@ -2217,6 +2658,7 @@
         salePrice: Number(document.getElementById('salePrice').value || 0),
         paymentMethod: document.getElementById('salePayment').value,
         notes: document.getElementById('saleNotes').value.trim(),
+        soldBy: document.getElementById('saleSoldBy').value,
         soldAt: Date.now()
       };
 
@@ -2277,6 +2719,7 @@
       document.getElementById('srcp-notes').textContent = s.notes || 'Standart teslimat.';
       document.getElementById('srcp-payment').textContent = s.paymentMethod;
       document.getElementById('srcp-price').textContent = formatCurrency(s.salePrice);
+      document.getElementById('srcp-seller').textContent = s.soldBy || '';
 
       document.getElementById('saleReceiptModal').classList.remove('hidden');
     }
@@ -2379,16 +2822,69 @@
     }
 
     
+    // --- ÇALIŞAN GİRİŞİ ---
+    function showLogin() {
+      const sel = document.getElementById('loginName');
+      sel.innerHTML = '<option value="" disabled selected>Seçiniz...</option>' + STAFF.map(n => `<option value="${n}">${n}</option>`).join('');
+      const cfg = syncConfig();
+      document.getElementById('loginUrl').value = cfg.url;
+      document.getElementById('loginKey').value = cfg.key;
+      document.getElementById('loginServer').open = !cfg.url;
+      document.getElementById('loginOverlay').style.display = 'flex';
+    }
+
+    async function doLogin(e) {
+      e.preventDefault();
+      const err = document.getElementById('loginErr');
+      err.style.display = 'none';
+      const name = document.getElementById('loginName').value;
+      const pin = document.getElementById('loginPin').value.trim();
+      const url = document.getElementById('loginUrl').value.trim().replace(/\/+$/, '');
+      const key = document.getElementById('loginKey').value.trim();
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      try {
+        if (url) {
+          localStorage.setItem(SYNC_URL_KEY, url);
+          localStorage.setItem(SYNC_KEY_KEY, key);
+          const r = await fetch(url + '/api/login', { method: 'POST', headers: { 'x-api-key': key, 'content-type': 'application/json' }, body: JSON.stringify({ name, pin }) });
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok || !d.ok) throw new Error(d.error || ('Sunucu hatası (' + r.status + ')'));
+        }
+        currentUser = name;
+        try { sessionStorage.setItem('mermer_user', name); } catch (x) {}
+        enterApp();
+      } catch (ex) {
+        err.textContent = ex instanceof TypeError ? 'Sunucuya ulaşılamadı. Adresi ve internetinizi kontrol edin.' : ex.message;
+        err.style.display = 'block';
+      } finally { btn.disabled = false; }
+    }
+
+    function logout() {
+      try { sessionStorage.removeItem('mermer_user'); } catch (e) {}
+      location.reload();
+    }
+
+    function enterApp() {
+      document.getElementById('loginOverlay').style.display = 'none';
+      const pill = document.getElementById('userPill');
+      document.getElementById('userPillName').textContent = currentUser;
+      pill.style.display = 'flex';
+      setSyncBadge(syncConfig().url ? 'busy' : 'off');
+      syncNow();
+      if (!window.__syncTimer) {
+        window.__syncTimer = setInterval(() => { if (!document.hidden) syncNow(); }, 20000);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) syncNow(); });
+      }
+    }
+
     // --- SAYFA YÜKLENDİĞİNDE BAŞLAT ---
     window.addEventListener('DOMContentLoaded', () => {
       initBrandSelects();
       loadData();
       renderOrders();
       renderSalesModule();
-      setSyncBadge(syncConfig().url ? 'busy' : 'off');
-      syncNow();
-      setInterval(() => { if (!document.hidden) syncNow(); }, 20000);
-      document.addEventListener('visibilitychange', () => { if (!document.hidden) syncNow(); });
+      if (currentUser) enterApp(); else showLogin();
     });
   </script>
 </body>
