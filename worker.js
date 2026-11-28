@@ -90,6 +90,54 @@ export default {
         return json(env, { ok: false, error: err.message }, 500);
       }
     }
+    const authed = () => env.API_KEY && (request.headers.get('x-api-key') || '').trim() === String(env.API_KEY).trim();
+
+    // Çalışan girişi: PIN'ler Cloudflare'de STAFF_PINS secret'ında durur, örn {"Rıdvan Mermer":"1234","Aykut Kaplan":"5678"}
+    if (url.pathname === '/api/login' && request.method === 'POST') {
+      try {
+        if (!authed()) return json(env, { ok: false, error: 'Erişim anahtarı yanlış' }, 401);
+        const ip = request.headers.get('cf-connecting-ip') || 'x';
+        if (tooMany(ip)) return json(env, { ok: false, error: 'Çok fazla deneme. 10 dakika sonra tekrar deneyin.' }, 429);
+        const body = await request.json().catch(() => ({}));
+        if (!env.STAFF_PINS) return json(env, { ok: true, noPin: true });
+        let pins = {};
+        try { pins = JSON.parse(env.STAFF_PINS); } catch (e) { return json(env, { ok: false, error: 'STAFF_PINS biçimi hatalı (JSON olmalı)' }, 500); }
+        if (!body.name || String(pins[body.name] ?? '') === '' || String(pins[body.name]) !== String(body.pin || '')) {
+          noteFail(ip);
+          return json(env, { ok: false, error: 'PIN yanlış' }, 401);
+        }
+        return json(env, { ok: true });
+      } catch (err) {
+        return json(env, { ok: false, error: err.message }, 500);
+      }
+    }
+
+    // Kabul fotoğrafları: kayıttan ayrı, tek tek KV anahtarında saklanır
+    if (url.pathname === '/api/photo') {
+      try {
+        if (!authed()) return json(env, { ok: false, error: 'Yetkisiz' }, 401);
+        if (!env.DB) return json(env, { ok: false, error: 'KV bağlantısı (DB) tanımlı değil' }, 500);
+        if (request.method === 'GET') {
+          const id = url.searchParams.get('id') || '';
+          if (!/^ph_[a-z0-9]{4,40}$/.test(id)) return json(env, { ok: false, error: 'Geçersiz kimlik' }, 400);
+          const data = await env.DB.get('photo:' + id);
+          return data ? json(env, { ok: true, data }) : json(env, { ok: false, error: 'Bulunamadı' }, 404);
+        }
+        if (request.method === 'POST') {
+          const b = await request.json().catch(() => ({}));
+          if (!/^ph_[a-z0-9]{4,40}$/.test(String(b.id || ''))) return json(env, { ok: false, error: 'Geçersiz kimlik' }, 400);
+          if (b.delete) { await env.DB.delete('photo:' + b.id); return json(env, { ok: true }); }
+          if (typeof b.data !== 'string' || !b.data.startsWith('data:image/jpeg;base64,') || b.data.length > 700000) {
+            return json(env, { ok: false, error: 'Fotoğraf geçersiz veya çok büyük' }, 413);
+          }
+          await env.DB.put('photo:' + b.id, b.data);
+          return json(env, { ok: true });
+        }
+      } catch (err) {
+        return json(env, { ok: false, error: err.message }, 500);
+      }
+    }
+
     if (url.pathname === '/api/track' && request.method === 'POST') {
       try {
         if (!env.DB) return json(env, { ok: false, error: 'Sistem hazır değil' }, 500);
@@ -119,7 +167,8 @@ export default {
           issueDesc: o.issueDesc,
           customerPrice: o.customerPrice === undefined ? null : o.customerPrice,
           approved: !!o.approved,
-          warranty: o.warranty
+          warranty: o.warranty,
+          history: (o.history || []).map(h => ({ status: h.status, at: h.at }))
         } });
       } catch (err) {
         return json(env, { ok: false, error: 'Sorgu yapılamadı' }, 500);
